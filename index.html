@@ -1,221 +1,234 @@
 <!DOCTYPE html>
-<html lang="fr" class="scroll-smooth">
+<html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wenzephone - Marché Alimentaire & Communication RDC</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wenzephone</title>
+    <!-- Tailwind CSS pour un design moderne et responsive -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-[#F8FAFC] font-sans min-h-screen flex flex-col text-[#0B192C]">
+<body class="bg-gray-100 flex justify-center items-center h-screen m-0">
 
-  <!-- BANDEAU SUPÉRIEUR -->
-  <div class="bg-[#0B192C] text-slate-300 text-xs py-2 px-4 sm:px-8 flex justify-between items-center border-b border-slate-800">
-    <div class="flex items-center gap-3">
-      <span class="flex items-center gap-1">⚡ <strong class="text-white">Taux RDC :</strong> 1 $ = <span id="taux-change-text" class="text-[#FF6500] font-bold">2300</span> CDF</span>
-      <span class="hidden md:inline text-slate-500">|</span>
-      <span class="inline-flex items-center gap-1.5 bg-[#1E3E62] px-3 py-1 rounded-lg text-white font-semibold">
-        👤 Compte : <strong id="label-profil-actif" class="text-[#FF6500]">Visiteur</strong>
-      </span>
-    </div>
-    <div class="flex items-center gap-3">
-      <div class="flex items-center gap-1.5">
-        <label for="select-devise" class="font-medium text-slate-400">Devise :</label>
-        <select id="select-devise" onchange="changerDevise()" class="bg-[#1E3E62] text-white border border-slate-700 rounded-lg px-2 py-0.5 font-bold outline-none cursor-pointer text-xs">
-          <option value="USD">USD ($)</option>
-          <option value="CDF">CDF (FC)</option>
-        </select>
-      </div>
-      <button onclick="ouvrirModalAuth()" id="btn-auth-header" class="bg-[#FF6500] hover:bg-[#e05b00] text-white px-3 py-1 rounded-lg font-bold transition shadow-sm">
-        Connexion / Inscription
-      </button>
-    </div>
-  </div>
-
-  <!-- EN-TÊTE ET NAVIGATION -->
-  <header class="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
-      
-      <a href="#" onclick="naviguerPage('accueil')" class="flex items-center gap-3 group">
-        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#0B192C] via-[#1E3E62] to-[#FF6500] flex items-center justify-center text-white font-black text-xl shadow-lg group-hover:scale-105 transition">
-          📞
-        </div>
-        <div class="flex flex-col">
-          <span class="text-2xl font-black tracking-tight text-[#0B192C] leading-none">wenze<span class="text-[#FF6500]">phone</span></span>
-          <span class="text-[9px] font-bold text-slate-400 tracking-widest uppercase mt-0.5">Marché RDC & Contact Direct</span>
-        </div>
-      </a>
-
-      <!-- Recherche -->
-      <div class="relative flex-1 max-w-md">
-        <div class="flex border-2 border-slate-200 focus-within:border-[#FF6500] rounded-2xl overflow-hidden shadow-sm bg-slate-50 transition">
-          <input type="text" id="recherche-input" oninput="filtrerParRecherche()" placeholder="Rechercher pondu, farines, riz, poissons..." class="flex-1 px-4 py-2.5 text-sm outline-none text-[#0B192C] bg-transparent" />
-          <button class="bg-[#0B192C] text-white px-5 flex items-center justify-center font-medium">🔍</button>
-        </div>
-      </div>
-
-      <!-- Navigation -->
-      <nav class="flex items-center gap-1 sm:gap-2 text-sm font-semibold">
-        <button id="nav-accueil" onclick="naviguerPage('accueil')" class="nav-btn px-4 py-2.5 rounded-xl transition duration-200 flex items-center gap-1.5" data-page="accueil">🛒 Marché</button>
-        <button id="nav-panier" onclick="naviguerPage('panier')" class="nav-btn px-4 py-2.5 rounded-xl transition duration-200 relative flex items-center gap-1.5" data-page="panier">🛍️ Panier <span id="badge-panier" class="hidden absolute -top-1 -right-1 bg-[#FF6500] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span></button>
-        <button id="nav-messages" onclick="naviguerPage('messages')" class="nav-btn px-4 py-2.5 rounded-xl transition duration-200 flex items-center gap-1.5" data-page="messages">💬 Messages & Appels</button>
-        <button id="nav-vendeur" onclick="verifierAccesVendeur('vendeur')" class="nav-btn px-4 py-2.5 rounded-xl transition duration-200 flex items-center gap-1.5 bg-orange-50 text-[#FF6500] border border-orange-200" data-page="vendeur">📊 Espace Vendeur</button>
-      </nav>
-    </div>
-  </header>
-
-  <!-- MODAL AUTHENTIFICATION SIMPLE & SÉCURISÉE -->
-  <div id="modal-auth" class="fixed inset-0 bg-[#0B192C]/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl overflow-hidden max-w-md w-full shadow-2xl border border-slate-100">
-      <div class="p-6 bg-[#0B192C] text-white flex justify-between items-center">
-        <div>
-          <h3 class="text-lg font-black">Inscription & Connexion</h3>
-          <p class="text-xs text-slate-300">Sécurisé et simple d'utilisation</p>
-        </div>
-        <button type="button" onclick="fermerModalAuth()" class="text-slate-300 hover:text-white font-bold text-xl">&times;</button>
-      </div>
-      <form id="form-auth" onsubmit="soumettreAuth(event)" class="p-6 space-y-4">
-        <div>
-          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Type de Compte</label>
-          <select id="auth-role" class="w-full p-3 border border-slate-200 rounded-xl text-sm font-semibold outline-none bg-white focus:border-[#FF6500]">
-            <option value="acheteur">🛒 Acheteur (Client)</option>
-            <option value="vendeur">🏪 Vendeur (Commerçant)</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Votre Nom complet / Boutique</label>
-          <input type="text" id="auth-nom" required placeholder="Ex: Gédéon Kadima" class="w-full p-3 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#FF6500]" />
-        </div>
-        <div>
-          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Numéro de Téléphone</label>
-          <input type="text" id="auth-telephone" required placeholder="+243..." class="w-full p-3 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#FF6500]" />
-        </div>
-        <!-- Mot de passe avec bouton œil 👁️ -->
-        <div>
-          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Mot de passe</label>
-          <div class="relative flex items-center">
-            <input type="password" id="auth-pass" required placeholder="••••••••" class="w-full p-3 pr-12 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#FF6500]" />
-            <button type="button" onclick="basculerAffichageMotDePasse()" class="absolute right-3 text-slate-400 hover:text-[#0B192C] focus:outline-none text-lg">
-              <span id="icone-oeil">👁️</span>
-            </button>
-          </div>
-        </div>
-        <button type="submit" class="w-full py-3.5 bg-[#FF6500] hover:bg-[#e05b00] text-white font-bold rounded-xl shadow-lg transition">
-          Valider et entrer
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- MODAL DE COMMUNICATION (Appel, Vidéo, Note vocale) -->
-  <div id="modal-communication" class="fixed inset-0 bg-[#0B192C]/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl overflow-hidden max-w-md w-full shadow-2xl p-6 space-y-5 text-center">
-      <div id="comm-titre-box">
-        <span class="text-3xl">📞</span>
-        <h3 id="comm-titre" class="text-xl font-black text-[#0B192C] mt-2">Communication avec le Vendeur</h3>
-        <p id="comm-sous-titre" class="text-xs text-slate-500 mt-1">Choisissez votre mode d'échange</p>
-      </div>
-
-      <div id="comm-contenu" class="space-y-4 py-2">
-        <!-- Simulation visuelle dynamique selon le choix -->
-      </div>
-
-      <button onclick="fermerModalCommunication()" class="w-full py-3 bg-slate-200 hover:bg-slate-300 text-[#0B192C] font-bold rounded-xl text-sm transition">
-        Fermer / Raccrocher
-      </button>
-    </div>
-  </div>
-
-  <!-- CONTENU PRINCIPAL -->
-  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-8">
-
-    <!-- PAGE ACCUEIL / MARCHÉ -->
-    <section id="page-accueil" class="page-sec transition-all duration-300">
-      <div class="relative rounded-3xl overflow-hidden shadow-2xl mb-8 bg-[#0B192C] text-white p-8 sm:p-12">
-        <span class="bg-[#FF6500] text-white text-xs font-black tracking-widest uppercase px-3.5 py-1.5 rounded-full shadow">
-          📞 MARCHÉ RDC AVEC APPELS & VOCAUX
-        </span>
-        <h1 class="text-3xl sm:text-5xl font-black mt-3 mb-3">Discutez, commandez et appelez vos vendeurs directement</h1>
-        <p class="text-slate-300 text-sm sm:text-base">Légumes, pondu, farines et poissons braisés avec avis clients et contact multimédia.</p>
-      </div>
-
-      <!-- Filtres -->
-      <div class="mb-8 flex items-center gap-3 overflow-x-auto pb-4">
-        <button onclick="filtrerParCategorie('Tous')" class="cat-btn px-5 py-3 rounded-2xl bg-[#0B192C] text-white text-xs font-bold whitespace-nowrap">✨ Tous</button>
-        <button onclick="filtrerParCategorie('Légumes')" class="cat-btn px-5 py-3 rounded-2xl bg-white text-[#0B192C] border text-xs font-bold whitespace-nowrap">🥬 Légumes</button>
-        <button onclick="filtrerParCategorie('Farines')" class="cat-btn px-5 py-3 rounded-2xl bg-white text-[#0B192C] border text-xs font-bold whitespace-nowrap">🌾 Farines</button>
-        <button onclick="filtrerParCategorie('Produits braisés')" class="cat-btn px-5 py-3 rounded-2xl bg-white text-[#0B192C] border text-xs font-bold whitespace-nowrap">🔥 Braisés</button>
-      </div>
-
-      <div id="grille-produits" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
-    </section>
-
-    <!-- PAGE MESSAGES & CENTRE D'APPEL -->
-    <section id="page-messages" class="page-sec hidden transition-all duration-300 space-y-6">
-      <div class="bg-white p-6 rounded-3xl border shadow-sm">
-        <h2 class="text-2xl font-black text-[#0B192C]">💬 Centre de Discussion & Appels</h2>
-        <p class="text-xs text-slate-500">Appels, notes vocales et appels vidéo avec les commerçants du marché.</p>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-white p-4 rounded-3xl border shadow-sm space-y-3">
-          <h3 class="font-bold text-sm text-[#0B192C]">Contacts Récents</h3>
-          <div onclick="selectionnerContactChat('Maman Ngoma')" class="p-3 bg-slate-50 hover:bg-orange-50 rounded-2xl cursor-pointer transition border">
-            <h4 class="font-bold text-xs text-[#0B192C]">🥬 Maman Ngoma (Marché Zigida)</h4>
-            <p class="text-[10px] text-slate-400">Dernier appel: Il y a 10 min</p>
-          </div>
-          <div onclick="selectionnerContactChat('Grillades Pap Louis')" class="p-3 bg-slate-50 hover:bg-orange-50 rounded-2xl cursor-pointer transition border">
-            <h4 class="font-bold text-xs text-[#0B192C]">🔥 Grillades chez Pap Louis</h4>
-            <p class="text-[10px] text-slate-400">Dernier message vocal reçu</p>
-          </div>
-        </div>
-        <div class="md:col-span-2 bg-white p-6 rounded-3xl border shadow-sm flex flex-col justify-between h-[450px]">
-          <div>
-            <h3 id="chat-titre-actif" class="font-bold text-base text-[#0B192C] border-b pb-3 mb-3">Sélectionnez une discussion</h3>
-            <div id="box-historique-chat" class="space-y-3 overflow-y-auto h-72 pr-2 text-xs">
-              <p class="text-slate-400 text-center mt-24">Cliquez sur un contact à gauche pour commencer à échanger par texte, appel ou note vocale.</p>
+    <!-- Conteneur principal style application mobile -->
+    <div class="w-full max-w-md h-full sm:h-[850px] bg-white sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden relative">
+        
+        <!-- En-tête -->
+        <header class="bg-emerald-600 text-white p-4 flex justify-between items-center shadow-md">
+            <h1 class="text-xl font-bold flex items-center gap-2">
+                <i class="fa-solid fa-store"></i> Wenzephone
+            </h1>
+            <div class="flex gap-4 text-xl">
+                <button onclick="switchTab('panier')" class="relative">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span id="badge-panier" class="absolute -top-2 -right-2 bg-red-500 text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold hidden">0</span>
+                </button>
             </div>
-          </div>
-          <div class="border-t pt-3 flex items-center gap-2">
-            <input type="text" id="input-message-texte" placeholder="Écrire un message..." class="flex-1 p-2.5 border rounded-xl text-xs outline-none focus:border-[#FF6500]" />
-            <button onclick="envoyerMessageTexte()" class="bg-[#FF6500] text-white px-4 py-2.5 rounded-xl text-xs font-bold">Envoyer</button>
-            <button onclick="lancerAppelVocalSimulation()" title="Appel vocal" class="bg-emerald-600 text-white p-2.5 rounded-xl text-xs">📞</button>
-            <button onclick="lancerAppelVideoSimulation()" title="Appel vidéo" class="bg-blue-600 text-white p-2.5 rounded-xl text-xs">📹</button>
-            <button onclick="envoyerNoteVocaleSimulation()" title="Note vocale" class="bg-purple-600 text-white p-2.5 rounded-xl text-xs">🎙️</button>
-          </div>
-        </div>
-      </div>
-    </section>
+        </header>
 
-    <!-- ESPACE VENDEUR -->
-    <section id="page-vendeur" class="page-sec hidden transition-all duration-300">
-      <div class="bg-white p-6 rounded-3xl border shadow-sm space-y-4">
-        <h2 id="vendeur-titre-boutique" class="text-2xl font-black text-[#0B192C]">Ma Boutique Vendeur</h2>
-        <p class="text-xs text-slate-500">Gérez vos produits et consultez les avis des clients.</p>
-      </div>
-    </section>
+        <!-- Corps dynamique (Contenu des pages) -->
+        <main class="flex-1 overflow-y-auto p-4 pb-20">
+            
+            <!-- PAGE ACCUEIL -->
+            <section id="page-accueil" class="page-content space-y-4">
+                <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
+                    <h2 class="text-lg font-bold text-emerald-800">Bienvenue sur Wenzephone !</h2>
+                    <p class="text-sm text-emerald-600">Votre marché en ligne rapide et sécurisé.</p>
+                </div>
 
-    <!-- PANIER -->
-    <section id="page-panier" class="page-sec hidden transition-all duration-300">
-      <div class="mb-6 bg-white p-6 rounded-3xl border shadow-sm">
-        <h2 class="text-2xl font-black text-[#0B192C]">🛍️ Panier d'achat</h2>
-      </div>
-      <div class="bg-white p-6 rounded-3xl border shadow-sm max-w-xl mx-auto space-y-4">
-        <div id="liste-panier" class="space-y-3"></div>
-        <hr />
-        <div class="flex justify-between font-black text-lg">
-          <span>Total :</span>
-          <span id="panier-total-affiche" class="text-[#FF6500]">0.00 $</span>
-        </div>
-        <button onclick="alert('Commande validée !')" class="w-full py-3 bg-emerald-600 text-white font-bold rounded-xl">Confirmer la commande</button>
-      </div>
-    </section>
+                <h3 class="font-bold text-gray-700">Produits populaires</h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-gray-50 p-3 rounded-xl border flex flex-col justify-between">
+                        <div>
+                            <div class="h-28 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 mb-2">
+                                <i class="fa-solid fa-mobile-screen text-3xl"></i>
+                            </div>
+                            <h4 class="font-semibold text-sm">Smartphone X</h4>
+                            <p class="text-emerald-600 font-bold text-sm">150 $</p>
+                        </div>
+                        <button onclick="ajouterAuPanier('Smartphone X', 150)" class="mt-3 bg-emerald-600 text-white py-1.5 rounded-lg text-xs font-semibold hover:bg-emerald-700 transition">
+                            Ajouter au panier
+                        </button>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-xl border flex flex-col justify-between">
+                        <div>
+                            <div class="h-28 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 mb-2">
+                                <i class="fa-solid fa-headphones text-3xl"></i>
+                            </div>
+                            <h4 class="font-semibold text-sm">Écouteurs Bluetooth</h4>
+                            <p class="text-emerald-600 font-bold text-sm">25 $</p>
+                        </div>
+                        <button onclick="ajouterAuPanier('Écouteurs Bluetooth', 25)" class="mt-3 bg-emerald-600 text-white py-1.5 rounded-lg text-xs font-semibold hover:bg-emerald-700 transition">
+                            Ajouter au panier
+                        </button>
+                    </div>
+                </div>
+            </section>
 
-  </main>
+            <!-- PAGE MESSAGERIE / DISCUSSION -->
+            <section id="page-messagerie" class="page-content hidden space-y-3">
+                <h2 class="text-lg font-bold text-gray-800 mb-2">Conversations</h2>
+                <div onclick="ouvrirDiscussion('Jean Paul')" class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition border">
+                    <div class="w-12 h-12 bg-emerald-200 rounded-full flex items-center justify-center text-emerald-800 font-bold">JP</div>
+                    <div class="flex-1">
+                        <h4 class="font-semibold text-sm">Jean Paul</h4>
+                        <p class="text-xs text-gray-500 truncate">Bonjour, le téléphone est toujours disponible ?</p>
+                    </div>
+                    <span class="text-xs text-gray-400">12:45</span>
+                </div>
+            </section>
 
-  <footer class="bg-[#0B192C] text-slate-400 text-center text-xs py-8 mt-auto border-t border-slate-800">
-    <p>&copy; 2026 Wenzephone RDC. Communication multimédia & Sécurité simplifiée.</p>
-  </footer>
+            <!-- FENÊTRE DE DISCUSSION INDIVIDUELLE -->
+            <section id="page-discussion" class="page-content hidden flex flex-col h-full">
+                <div class="flex items-center gap-3 pb-3 border-b">
+                    <button onclick="switchTab('messagerie')" class="text-gray-600"><i class="fa-solid fa-arrow-left"></i></button>
+                    <h3 id="nom-interlocuteur" class="font-bold text-gray-800">Discussion</h3>
+                </div>
+                <div class="flex-1 overflow-y-auto py-4 space-y-3" id="box-messages">
+                    <div class="bg-gray-100 p-2.5 rounded-2xl rounded-tl-none text-sm max-w-[80%]">Bonjour, je suis intéressé par votre produit.</div>
+                    <div class="bg-emerald-600 text-white p-2.5 rounded-2xl rounded-tr-none text-sm max-w-[80%] ml-auto">Bonjour ! Oui, il est disponible.</div>
+                </div>
+                <div class="flex gap-2 pt-2 border-t">
+                    <input type="text" id="input-message" placeholder="Écrire un message..." class="flex-1 border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-600">
+                    <button onclick="envoyerMessage()" class="bg-emerald-600 text-white px-4 rounded-xl text-sm"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+            </section>
 
-  <script src="script.js"></script>
+            <!-- PAGE PANIER -->
+            <section id="page-panier" class="page-content hidden space-y-4">
+                <h2 class="text-lg font-bold text-gray-800">Mon Panier</h2>
+                <div id="liste-panier" class="space-y-2">
+                    <!-- Les articles ajoutés s'afficheront ici -->
+                    <p class="text-sm text-gray-500 text-center py-8">Votre panier est vide.</p>
+                </div>
+                <div id="total-container" class="hidden border-t pt-4 mt-4">
+                    <div class="flex justify-between font-bold text-base mb-4">
+                        <span>Total :</span>
+                        <span id="prix-total" class="text-emerald-600">0 $</span>
+                    </div>
+                    <button onclick="validerCommande()" class="w-full bg-emerald-600 text-white py-2.5 rounded-xl font-semibold shadow hover:bg-emerald-700 transition">
+                        Valider la commande
+                    </button>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Barre de navigation inférieure -->
+        <nav class="absolute bottom-0 left-0 right-0 bg-white border-t flex justify-around py-3 shadow-lg">
+            <button onclick="switchTab('accueil')" id="nav-accueil" class="flex flex-col items-center text-emerald-600 text-xs font-medium">
+                <i class="fa-solid fa-house text-lg"></i>
+                Accueil
+            </button>
+            <button onclick="switchTab('messagerie')" id="nav-messagerie" class="flex flex-col items-center text-gray-400 text-xs font-medium">
+                <i class="fa-solid fa-comments text-lg"></i>
+                Messagerie
+            </button>
+            <button onclick="switchTab('panier')" id="nav-panier" class="flex flex-col items-center text-gray-400 text-xs font-medium">
+                <i class="fa-solid fa-cart-shopping text-lg"></i>
+                Panier
+            </button>
+        </nav>
+
+    </div>
+
+    <!-- Script JavaScript pour faire fonctionner toutes les interactions -->
+    <script>
+        let panier = [];
+
+        function switchTab(tabId) {
+            // Cacher toutes les pages
+            document.querySelectorAll('.page-content').forEach(el => el.classList.add('hidden'));
+            
+            // Afficher la page ciblée
+            document.getElementById('page-' + tabId).classList.remove('hidden');
+
+            // Réinitialiser les couleurs de la barre de navigation
+            ['accueil', 'messagerie', 'panier'].forEach(t => {
+                const btn = document.getElementById('nav-' + t);
+                if(btn) {
+                    btn.classList.remove('text-emerald-600');
+                    btn.classList.add('text-gray-400');
+                }
+            });
+
+            // Activer la couleur de l'onglet actif
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn) {
+                activeBtn.classList.remove('text-gray-400');
+                activeBtn.classList.add('text-emerald-600');
+            }
+        }
+
+        function ajouterAuPanier(nom, prix) {
+            panier.push({nom, prix});
+            mettreAJourPanier();
+            alert(nom + " a été ajouté au panier !");
+        }
+
+        function mettreAJourPanier() {
+            const liste = document.getElementById('liste-panier');
+            const badge = document.getElementById('badge-panier');
+            const totalContainer = document.getElementById('total-container');
+            const prixTotalEl = document.getElementById('prix-total');
+
+            if (panier.length === 0) {
+                liste.innerHTML = '<p class="text-sm text-gray-500 text-center py-8">Votre panier est vide.</p>';
+                badge.classList.add('hidden');
+                totalContainer.classList.add('hidden');
+                return;
+            }
+
+            badge.textContent = panier.length;
+            badge.classList.remove('hidden');
+            totalContainer.classList.remove('hidden');
+
+            let html = '';
+            let total = 0;
+            panier.forEach((item, index) => {
+                total += item.prix;
+                html += `
+                    flex justify-between items-center bg-gray-50 p-3 rounded-xl border mb-2 text-sm">
+                        <div>
+                            <h4 class="font-semibold">${item.nom}</h4>
+                            <p class="text-emerald-600 font-bold">${item.prix} $</p>
+                        </div>
+                        <button onclick="supprimerDuPanier(${index})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+            });
+            liste.innerHTML = html;
+            prixTotalEl.textContent = total + ' $';
+        }
+
+        function supprimerDuPanier(index) {
+            panier.splice(index, 1);
+            mettreAJourPanier();
+        }
+
+        function ouvrirDiscussion(nom) {
+            document.getElementById('nom-interlocuteur').textContent = nom;
+            document.querySelectorAll('.page-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('page-discussion').classList.remove('hidden');
+        }
+
+        function envoyerMessage() {
+            const input = document.getElementById('input-message');
+            const box = document.getElementById('box-messages');
+            if (input.value.trim() !== '') {
+                box.innerHTML += `<div class="bg-emerald-600 text-white p-2.5 rounded-2xl rounded-tr-none text-sm max-w-[80%] ml-auto">${input.value}</div>`;
+                input.value = '';
+                box.scrollTop = box.scrollHeight;
+            }
+        }
+
+        function validerCommande() {
+            alert('Commande validée avec succès ! Merci d\'avoir utilisé Wenzephone.');
+            panier = [];
+            mettreAJourPanier();
+            switchTab('accueil');
+        }
+    </script>
 </body>
 </html>
