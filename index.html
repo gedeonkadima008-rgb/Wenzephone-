@@ -1,234 +1,546 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wenzephone</title>
-    <!-- Tailwind CSS pour un design moderne et responsive -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wenzephone - Marché & Électronique en RDC</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome pour les icônes -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- FontAwesome Icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
-<body class="bg-gray-100 flex justify-center items-center h-screen m-0">
+<body class="bg-[#F0F6FC] font-sans min-h-screen flex flex-col text-[#0F2844]">
 
-    <!-- Conteneur principal style application mobile -->
-    <div class="w-full max-w-md h-full sm:h-[850px] bg-white sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden relative">
-        
-        <!-- En-tête -->
-        <header class="bg-emerald-600 text-white p-4 flex justify-between items-center shadow-md">
-            <h1 class="text-xl font-bold flex items-center gap-2">
-                <i class="fa-solid fa-store"></i> Wenzephone
-            </h1>
-            <div class="flex gap-4 text-xl">
-                <button onclick="switchTab('panier')" class="relative">
-                    <i class="fa-solid fa-cart-shopping"></i>
-                    <span id="badge-panier" class="absolute -top-2 -right-2 bg-red-500 text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold hidden">0</span>
-                </button>
+    <!-- MODAL D'INSCRIPTION / CONNEXION OBLIGATOIRE -->
+    <div id="modal-auth" class="fixed inset-0 bg-[#0F2844]/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 space-y-6 border-t-4 border-[#007FFF]">
+            <div class="text-center space-y-2">
+                <div class="w-16 h-16 bg-[#007FFF]/10 text-[#007FFF] rounded-2xl mx-auto flex items-center justify-center text-2xl font-bold shadow-inner">
+                    <i class="fa-solid fa-store"></i>
+                </div>
+                <h2 class="text-xl font-extrabold text-[#0F2844]">Bienvenue sur Wenzephone</h2>
+                <p class="text-xs text-slate-500">Veuillez vous inscrire ou vous connecter pour accéder au marché congolais.</p>
             </div>
-        </header>
 
-        <!-- Corps dynamique (Contenu des pages) -->
-        <main class="flex-1 overflow-y-auto p-4 pb-20">
-            
-            <!-- PAGE ACCUEIL -->
-            <section id="page-accueil" class="page-content space-y-4">
-                <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
-                    <h2 class="text-lg font-bold text-emerald-800">Bienvenue sur Wenzephone !</h2>
-                    <p class="text-sm text-emerald-600">Votre marché en ligne rapide et sécurisé.</p>
+            <form id="form-auth" onsubmit="connecterUtilisateur(event)" class="space-y-4 text-sm">
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Nom complet ou Nom de la boutique</label>
+                    <input type="text" id="auth-nom" required placeholder="ex: Gédéon Kadima" class="w-full border rounded-xl p-3 focus:border-[#007FFF] focus:outline-none bg-slate-50">
                 </div>
-
-                <h3 class="font-bold text-gray-700">Produits populaires</h3>
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="bg-gray-50 p-3 rounded-xl border flex flex-col justify-between">
-                        <div>
-                            <div class="h-28 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 mb-2">
-                                <i class="fa-solid fa-mobile-screen text-3xl"></i>
-                            </div>
-                            <h4 class="font-semibold text-sm">Smartphone X</h4>
-                            <p class="text-emerald-600 font-bold text-sm">150 $</p>
-                        </div>
-                        <button onclick="ajouterAuPanier('Smartphone X', 150)" class="mt-3 bg-emerald-600 text-white py-1.5 rounded-lg text-xs font-semibold hover:bg-emerald-700 transition">
-                            Ajouter au panier
-                        </button>
-                    </div>
-                    <div class="bg-gray-50 p-3 rounded-xl border flex flex-col justify-between">
-                        <div>
-                            <div class="h-28 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 mb-2">
-                                <i class="fa-solid fa-headphones text-3xl"></i>
-                            </div>
-                            <h4 class="font-semibold text-sm">Écouteurs Bluetooth</h4>
-                            <p class="text-emerald-600 font-bold text-sm">25 $</p>
-                        </div>
-                        <button onclick="ajouterAuPanier('Écouteurs Bluetooth', 25)" class="mt-3 bg-emerald-600 text-white py-1.5 rounded-lg text-xs font-semibold hover:bg-emerald-700 transition">
-                            Ajouter au panier
-                        </button>
-                    </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Numéro de Téléphone (RDC)</label>
+                    <input type="tel" id="auth-tel" required placeholder="ex: +243 847 135 909" class="w-full border rounded-xl p-3 focus:border-[#007FFF] focus:outline-none bg-slate-50">
                 </div>
-            </section>
-
-            <!-- PAGE MESSAGERIE / DISCUSSION -->
-            <section id="page-messagerie" class="page-content hidden space-y-3">
-                <h2 class="text-lg font-bold text-gray-800 mb-2">Conversations</h2>
-                <div onclick="ouvrirDiscussion('Jean Paul')" class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition border">
-                    <div class="w-12 h-12 bg-emerald-200 rounded-full flex items-center justify-center text-emerald-800 font-bold">JP</div>
-                    <div class="flex-1">
-                        <h4 class="font-semibold text-sm">Jean Paul</h4>
-                        <p class="text-xs text-gray-500 truncate">Bonjour, le téléphone est toujours disponible ?</p>
-                    </div>
-                    <span class="text-xs text-gray-400">12:45</span>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Vous êtes :</label>
+                    <select id="auth-role" class="w-full border rounded-xl p-3 focus:border-[#007FFF] focus:outline-none bg-slate-50">
+                        <option value="Client">Client / Acheteur</option>
+                        <option value="Vendeur">Vendeur / Marchand</option>
+                    </select>
                 </div>
-            </section>
-
-            <!-- FENÊTRE DE DISCUSSION INDIVIDUELLE -->
-            <section id="page-discussion" class="page-content hidden flex flex-col h-full">
-                <div class="flex items-center gap-3 pb-3 border-b">
-                    <button onclick="switchTab('messagerie')" class="text-gray-600"><i class="fa-solid fa-arrow-left"></i></button>
-                    <h3 id="nom-interlocuteur" class="font-bold text-gray-800">Discussion</h3>
-                </div>
-                <div class="flex-1 overflow-y-auto py-4 space-y-3" id="box-messages">
-                    <div class="bg-gray-100 p-2.5 rounded-2xl rounded-tl-none text-sm max-w-[80%]">Bonjour, je suis intéressé par votre produit.</div>
-                    <div class="bg-emerald-600 text-white p-2.5 rounded-2xl rounded-tr-none text-sm max-w-[80%] ml-auto">Bonjour ! Oui, il est disponible.</div>
-                </div>
-                <div class="flex gap-2 pt-2 border-t">
-                    <input type="text" id="input-message" placeholder="Écrire un message..." class="flex-1 border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-600">
-                    <button onclick="envoyerMessage()" class="bg-emerald-600 text-white px-4 rounded-xl text-sm"><i class="fa-solid fa-paper-plane"></i></button>
-                </div>
-            </section>
-
-            <!-- PAGE PANIER -->
-            <section id="page-panier" class="page-content hidden space-y-4">
-                <h2 class="text-lg font-bold text-gray-800">Mon Panier</h2>
-                <div id="liste-panier" class="space-y-2">
-                    <!-- Les articles ajoutés s'afficheront ici -->
-                    <p class="text-sm text-gray-500 text-center py-8">Votre panier est vide.</p>
-                </div>
-                <div id="total-container" class="hidden border-t pt-4 mt-4">
-                    <div class="flex justify-between font-bold text-base mb-4">
-                        <span>Total :</span>
-                        <span id="prix-total" class="text-emerald-600">0 $</span>
-                    </div>
-                    <button onclick="validerCommande()" class="w-full bg-emerald-600 text-white py-2.5 rounded-xl font-semibold shadow hover:bg-emerald-700 transition">
-                        Valider la commande
-                    </button>
-                </div>
-            </section>
-
-        </main>
-
-        <!-- Barre de navigation inférieure -->
-        <nav class="absolute bottom-0 left-0 right-0 bg-white border-t flex justify-around py-3 shadow-lg">
-            <button onclick="switchTab('accueil')" id="nav-accueil" class="flex flex-col items-center text-emerald-600 text-xs font-medium">
-                <i class="fa-solid fa-house text-lg"></i>
-                Accueil
-            </button>
-            <button onclick="switchTab('messagerie')" id="nav-messagerie" class="flex flex-col items-center text-gray-400 text-xs font-medium">
-                <i class="fa-solid fa-comments text-lg"></i>
-                Messagerie
-            </button>
-            <button onclick="switchTab('panier')" id="nav-panier" class="flex flex-col items-center text-gray-400 text-xs font-medium">
-                <i class="fa-solid fa-cart-shopping text-lg"></i>
-                Panier
-            </button>
-        </nav>
-
+                <button type="submit" class="w-full bg-[#007FFF] hover:bg-[#0065CC] text-white font-bold py-3.5 rounded-xl shadow-lg transition">
+                    Accéder à la plateforme <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </form>
+        </div>
     </div>
 
-    <!-- Script JavaScript pour faire fonctionner toutes les interactions -->
-    <script>
-        let panier = [];
+    <!-- BANDEAU SUPÉRIEUR (COULEURS RDC : Bleu ciel dominant, filet jaune/rouge) -->
+    <div class="bg-[#007FFF] text-white text-xs py-2 px-4 sm:px-8 flex justify-between items-center border-b-2 border-[#FCD116]">
+        <div class="flex items-center gap-3">
+            <a href="https://wa.me/243847135909" target="_blank" class="inline-flex items-center gap-1 font-medium hover:text-[#FCD116] transition">
+                <i class="fa-brands fa-whatsapp text-[#FCD116] text-sm"></i> WhatsApp Agent: +243 847 135 909
+            </a>
+        </div>
+        <div class="flex items-center gap-3">
+            <span id="label-profil-connecte" class="hidden font-semibold text-[#FCD116]"></span>
+            <label for="select-devise" class="font-semibold text-white/90">Devise :</label>
+            <select id="select-devise" onchange="changerDevise()" class="bg-[#0055B3] text-white rounded px-2 py-1 text-xs border border-white/30 focus:outline-none font-bold">
+                <option value="USD">USD ($)</option>
+                <option value="CDF">CDF (FC)</option>
+            </select>
+        </div>
+    </div>
 
-        function switchTab(tabId) {
-            // Cacher toutes les pages
-            document.querySelectorAll('.page-content').forEach(el => el.classList.add('hidden'));
+    <!-- EN-TÊTE PRINCIPAL -->
+    <header class="bg-[#0F2844] text-white shadow-md sticky top-0 z-40 border-b-4 border-[#CE1126]">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 onclick="naviguerVers('accueil')" class="text-xl font-extrabold flex items-center gap-2 cursor-pointer text-[#007FFF]">
+                <i class="fa-solid fa-store text-[#FCD116]"></i> Wenzephone
+            </h1>
+            <div class="flex items-center gap-4">
+                <button onclick="naviguerVers('panier')" class="relative p-2 text-slate-200 hover:text-[#007FFF] transition">
+                    <i class="fa-solid fa-cart-shopping text-xl"></i>
+                    <span id="badge-panier" class="absolute -top-1 -right-1 bg-[#CE1126] text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold hidden">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENU PRINCIPAL DYNAMIQUE -->
+    <main class="max-w-4xl mx-auto w-full flex-1 p-4 pb-28">
+
+        <!-- 1. PAGE ACCUEIL -->
+        <section id="page-accueil" class="section-page space-y-6">
+            <div class="bg-gradient-to-r from-[#007FFF] to-[#0F2844] text-white p-5 rounded-2xl shadow-xl flex justify-between items-center relative overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-[#FCD116]/20 rounded-full blur-xl"></div>
+                <div>
+                    <h2 class="text-lg font-bold text-[#FCD116]">Marché en Ligne RDC</h2>
+                    <p class="text-xs text-slate-100 mt-1">Achetez et vendez en toute sécurité en Francs Congolais ou en Dollars.</p>
+                </div>
+                <button onclick="naviguerVers('publier')" class="bg-[#FCD116] hover:bg-[#e5bc00] text-[#0F2844] font-extrabold text-xs py-2.5 px-3.5 rounded-xl shadow transition z-10">
+                    + Exposer un article
+                </button>
+            </div>
+
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-gray-800 text-base">Articles disponibles</h3>
+                <span class="text-xs text-slate-500 font-medium" id="compteur-articles">2 articles disponibles</span>
+            </div>
+
+            <div id="grille-produits" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+        </section>
+
+        <!-- 2. PAGE PUBLIER -->
+        <section id="page-publier" class="section-page hidden max-w-lg mx-auto bg-white p-6 rounded-2xl shadow-lg border border-slate-200 space-y-4">
+            <h2 class="text-lg font-bold text-[#0F2844] flex items-center gap-2 border-b pb-3">
+                <i class="fa-solid fa-plus-circle text-[#007FFF]"></i> Exposer un nouvel article
+            </h2>
+            <form id="form-publier" onsubmit="exposerArticle(event)" class="space-y-4 text-sm">
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Nom de l'article</label>
+                    <input type="text" id="pub-nom" required placeholder="ex: iPhone 13, Sac de Riz..." class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Prix ($ USD)</label>
+                        <input type="number" step="0.01" id="pub-prix" required placeholder="ex: 45" class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Catégorie</label>
+                        <select id="pub-categorie" class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none">
+                            <option>Électronique</option>
+                            <option>Alimentation</option>
+                            <option>Habillement</option>
+                            <option>Autre</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Numéro WhatsApp / Téléphone</label>
+                    <input type="tel" id="pub-tel" required placeholder="ex: +243847135909" class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Description</label>
+                    <textarea id="pub-desc" rows="2" placeholder="État du produit..." class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-[#007FFF] hover:bg-[#0065CC] text-white font-bold py-3 rounded-xl shadow transition">
+                    Mettre en ligne
+                </button>
+            </form>
+        </section>
+
+        <!-- 3. PAGE MESSAGERIE -->
+        <section id="page-messagerie" class="section-page hidden space-y-4">
+            <h2 class="text-lg font-bold text-[#0F2844]">Espace Échanges & Discussions</h2>
+            <div class="bg-white rounded-2xl shadow border border-slate-200 divide-y">
+                <div onclick="ouvrirChat('Agent WhatsApp Wenzephone', '+243847135909')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-green-100 text-green-700 rounded-full flex items-center justify-center font-bold">
+                            <i class="fa-brands fa-whatsapp text-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-sm text-[#0F2844]">Agent Support principal</h4>
+                            <p class="text-xs text-slate-500">+243 847 135 909</p>
+                        </div>
+                    </div>
+                    <span class="text-xs text-emerald-600 font-semibold">En ligne</span>
+                </div>
+                <div onclick="ouvrirChat('Service Vente & Support', '+243824248520')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-[#007FFF]/10 text-[#007FFF] rounded-full flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-headset text-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-sm text-[#0F2844]">Support Ventes II</h4>
+                            <p class="text-xs text-slate-500">+243 824 248 520</p>
+                        </div>
+                    </div>
+                    <span class="text-xs text-slate-400">Disponible</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3.1 CHAT INDIVIDUEL -->
+        <section id="page-chat" class="section-page hidden bg-white rounded-2xl shadow-lg border border-slate-200 flex flex-col h-[500px]">
+            <div class="p-4 bg-[#007FFF] text-white rounded-t-2xl flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <button onclick="naviguerVers('messagerie')" class="text-white hover:text-slate-200"><i class="fa-solid fa-arrow-left"></i></button>
+                    <div>
+                        <h3 id="chat-nom" class="font-bold text-sm">Agent Wenzephone</h3>
+                        <p class="text-[10px] text-[#FCD116]">Contact direct RDC</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a id="link-appel" href="#" class="bg-white text-[#007FFF] w-8 h-8 rounded-full flex items-center justify-center text-xs shadow font-bold" title="Appeler">
+                        <i class="fa-solid fa-phone"></i>
+                    </a>
+                    <a id="link-whatsapp" href="#" target="_blank" class="bg-green-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-xs shadow" title="WhatsApp Direct">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </a>
+                </div>
+            </div>
+            <div id="box-discussion" class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50 text-sm">
+                <div class="bg-white border p-3 rounded-2xl rounded-tl-none max-w-[80%] shadow-sm">
+                    Bonjour ! Je suis l'agent Wenzephone. Comment puis-je vous aider pour vos transactions ?
+                </div>
+            </div>
+            <div class="p-3 border-t bg-white flex gap-2 rounded-b-2xl">
+                <input type="text" id="input-chat" placeholder="Écrivez votre message..." class="flex-1 border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#007FFF]">
+                <button onclick="envoyerMessageChat()" class="bg-[#007FFF] text-white px-4 rounded-xl text-sm font-semibold hover:bg-[#0065CC]">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- 4. PAGE REVENUS -->
+        <section id="page-revenus" class="section-page hidden space-y-4">
+            <h2 class="text-lg font-bold text-[#0F2844] flex items-center gap-2">
+                <i class="fa-solid fa-chart-line text-[#007FFF]"></i> Tableau de bord & Revenus Vendeur
+            </h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <div class="bg-white p-4 rounded-2xl shadow border border-slate-200">
+                    <p class="text-xs text-slate-500">Ventes Totales</p>
+                    <p id="stat-ventes" class="text-xl font-bold text-[#0F2844] mt-1">$ 0.00</p>
+                </div>
+                <div class="bg-white p-4 rounded-2xl shadow border border-slate-200">
+                    <p class="text-xs text-slate-500">Commandes</p>
+                    <p id="stat-commandes" class="text-xl font-bold text-[#007FFF] mt-1">0</p>
+                </div>
+                <div class="bg-white p-4 rounded-2xl shadow border border-slate-200 col-span-2 sm:col-span-1">
+                    <p class="text-xs text-slate-500">Revenu Net (90%)</p>
+                    <p id="stat-revenunet" class="text-xl font-bold text-emerald-600 mt-1">$ 0.00</p>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl shadow border border-slate-200 space-y-3">
+                <h3 class="font-bold text-sm text-slate-800">Historique des transactions</h3>
+                <div id="liste-historique" class="text-xs text-slate-500 space-y-2">
+                    <p class="py-4 text-center">Aucune vente enregistrée.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. PAGE PANIER & PAIEMENT MOBILE RDC -->
+        <section id="page-panier" class="section-page hidden space-y-4">
+            <h2 class="text-lg font-bold text-[#0F2844]">Mon Panier & Paiement Sécurisé</h2>
+            <div id="contenu-panier" class="bg-white p-4 rounded-2xl shadow border border-slate-200 space-y-3">
+                <p class="text-sm text-slate-500 text-center py-6">Votre panier est vide.</p>
+            </div>
             
-            // Afficher la page ciblée
-            document.getElementById('page-' + tabId).classList.remove('hidden');
+            <div id="bloc-total" class="bg-white p-5 rounded-2xl shadow border border-slate-200 space-y-4 hidden">
+                <div class="flex justify-between items-center font-bold text-base border-b pb-3">
+                    <span>Total à payer :</span>
+                    <span id="texte-total-panier" class="text-[#007FFF] text-lg">$ 0.00</span>
+                </div>
 
-            // Réinitialiser les couleurs de la barre de navigation
-            ['accueil', 'messagerie', 'panier'].forEach(t => {
-                const btn = document.getElementById('nav-' + t);
+                <!-- OPTIONS DE PAIEMENT MOBILE RDC -->
+                <div class="space-y-3">
+                    <label class="block font-bold text-sm text-slate-800">Mode de paiement mobile :</label>
+                    
+                    <div class="grid grid-cols-3 gap-2">
+                        <label class="border-2 border-slate-200 rounded-xl p-3 flex flex-col items-center justify-center cursor-pointer hover:border-red-600 transition bg-red-50/30">
+                            <input type="radio" name="paiement" value="Airtel Money" checked class="mb-1 accent-red-600">
+                            <span class="font-bold text-xs text-red-600">Airtel Money</span>
+                        </label>
+                        <label class="border-2 border-slate-200 rounded-xl p-3 flex flex-col items-center justify-center cursor-pointer hover:border-orange-500 transition bg-orange-50/30">
+                            <input type="radio" name="paiement" value="Orange Money" class="mb-1 accent-orange-500">
+                            <span class="font-bold text-xs text-orange-500">Orange Money</span>
+                        </label>
+                        <label class="border-2 border-slate-200 rounded-xl p-3 flex flex-col items-center justify-center cursor-pointer hover:border-red-500 transition bg-red-50/20">
+                            <input type="radio" name="paiement" value="M-Pesa" class="mb-1 accent-red-500">
+                            <span class="font-bold text-xs text-red-700">M-Pesa</span>
+                        </label>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Numéro de téléphone pour le débit :</label>
+                        <input type="tel" id="tel-paiement" placeholder="ex: 0847135909" class="w-full border rounded-xl p-2.5 text-sm focus:border-[#007FFF] focus:outline-none">
+                    </div>
+                </div>
+
+                <button onclick="validerPaiementMobile()" class="w-full bg-[#007FFF] hover:bg-[#0065CC] text-white font-bold py-3.5 rounded-xl shadow-lg transition text-sm flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-lock"></i> Payer maintenant
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- BARRE DE NAVIGATION INFÉRIEURE -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-2xl z-40">
+        <div class="max-w-md mx-auto flex justify-around py-2">
+            <button onclick="naviguerVers('accueil')" id="nav-accueil" class="flex flex-col items-center text-[#007FFF] text-[11px] font-bold">
+                <i class="fa-solid fa-house text-lg"></i> Accueil
+            </button>
+            <button onclick="naviguerVers('publier')" id="nav-publier" class="flex flex-col items-center text-slate-400 text-[11px] font-semibold">
+                <i class="fa-solid fa-plus-circle text-lg"></i> Publier
+            </button>
+            <button onclick="naviguerVers('messagerie')" id="nav-messagerie" class="flex flex-col items-center text-slate-400 text-[11px] font-semibold">
+                <i class="fa-solid fa-comments text-lg"></i> Messagerie
+            </button>
+            <button onclick="naviguerVers('revenus')" id="nav-revenus" class="flex flex-col items-center text-slate-400 text-[11px] font-semibold">
+                <i class="fa-solid fa-chart-line text-lg"></i> Revenus
+            </button>
+        </div>
+    </nav>
+
+    <!-- SCRIPT JAVASCRIPT INTELLIGENT -->
+    <script>
+        const TAUX_CDF = 2800;
+        let deviseActuelle = 'USD';
+        let utilisateurActuel = null;
+
+        // Produits de base avec numéros réels
+        let produits = [
+            { id: 1, nom: "Smartphone Android 64GB", prixUSD: 120, categorie: "Électronique", tel: "+243847135909", desc: "Téléphone neuf sous carton." },
+            { id: 2, nom: "Sac de Riz 25kg Premium", prixUSD: 30, categorie: "Alimentation", tel: "+243824248520", desc: "Riz de qualité supérieure." }
+        ];
+
+        let panier = [];
+        let ventesTotalesUSD = 0;
+        let nombreCommandes = 0;
+
+        // GESTION DE L'INSCRIPTION / CONNEXION
+        function connecterUtilisateur(event) {
+            event.preventDefault();
+            const nom = document.getElementById('auth-nom').value;
+            const tel = document.getElementById('auth-tel').value;
+            const role = document.getElementById('auth-role').value;
+
+            utilisateurActuel = { nom, tel, role };
+            
+            document.getElementById('modal-auth').classList.add('hidden');
+            
+            const lbl = document.getElementById('label-profil-connecte');
+            lbl.textContent = `👤 ${nom} (${role})`;
+            lbl.classList.remove('hidden');
+
+            alert(`Bienvenue ${nom} sur Wenzephone ! Connexion réussie.`);
+        }
+
+        // NAVIGATION ENTRE LES PAGES
+        function naviguerVers(pageId) {
+            document.querySelectorAll('.section-page').forEach(el => el.classList.add('hidden'));
+            const cible = document.getElementById('page-' + pageId);
+            if(cible) cible.classList.remove('hidden');
+
+            ['accueil', 'publier', 'messagerie', 'revenus'].forEach(id => {
+                const btn = document.getElementById('nav-' + id);
                 if(btn) {
-                    btn.classList.remove('text-emerald-600');
-                    btn.classList.add('text-gray-400');
+                    btn.classList.remove('text-[#007FFF]');
+                    btn.classList.add('text-slate-400');
                 }
             });
 
-            // Activer la couleur de l'onglet actif
-            const activeBtn = document.getElementById('nav-' + tabId);
+            const activeBtn = document.getElementById('nav-' + pageId);
             if(activeBtn) {
-                activeBtn.classList.remove('text-gray-400');
-                activeBtn.classList.add('text-emerald-600');
+                activeBtn.classList.remove('text-slate-400');
+                activeBtn.classList.add('text-[#007FFF]');
             }
         }
 
-        function ajouterAuPanier(nom, prix) {
-            panier.push({nom, prix});
-            mettreAJourPanier();
-            alert(nom + " a été ajouté au panier !");
+        // FORMATAGE DE LA DEVISE
+        function formaterPrix(prixUSD) {
+            if (deviseActuelle === 'CDF') {
+                return (prixUSD * TAUX_CDF).toLocaleString('fr-FR') + ' FC';
+            }
+            return '$ ' + prixUSD.toFixed(2);
         }
 
-        function mettreAJourPanier() {
-            const liste = document.getElementById('liste-panier');
-            const badge = document.getElementById('badge-panier');
-            const totalContainer = document.getElementById('total-container');
-            const prixTotalEl = document.getElementById('prix-total');
+        function changerDevise() {
+            deviseActuelle = document.getElementById('select-devise').value;
+            afficherProduits();
+            afficherPanier();
+            mettreAJourRevenus();
+        }
 
-            if (panier.length === 0) {
-                liste.innerHTML = '<p class="text-sm text-gray-500 text-center py-8">Votre panier est vide.</p>';
-                badge.classList.add('hidden');
-                totalContainer.classList.add('hidden');
-                return;
-            }
-
-            badge.textContent = panier.length;
-            badge.classList.remove('hidden');
-            totalContainer.classList.remove('hidden');
-
+        // AFFICHAGE DES PRODUITS
+        function afficherProduits() {
+            const grille = document.getElementById('grille-produits');
+            document.getElementById('compteur-articles').textContent = produits.length + " article(s) disponible(s)";
+            
             let html = '';
-            let total = 0;
-            panier.forEach((item, index) => {
-                total += item.prix;
+            produits.forEach(p => {
+                const telClean = p.tel.replace(/\+/g, '').replace(/\s+/g, '');
                 html += `
-                    flex justify-between items-center bg-gray-50 p-3 rounded-xl border mb-2 text-sm">
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex flex-col justify-between">
                         <div>
-                            <h4 class="font-semibold">${item.nom}</h4>
-                            <p class="text-emerald-600 font-bold">${item.prix} $</p>
+                            <div class="h-32 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 mb-3">
+                                <i class="fa-solid fa-box-open text-4xl"></i>
+                            </div>
+                            <span class="text-[10px] bg-[#007FFF]/10 text-[#007FFF] px-2 py-0.5 rounded-full font-bold">${p.categorie}</span>
+                            <h4 class="font-bold text-[#0F2844] text-sm mt-1">${p.nom}</h4>
+                            <p class="text-xs text-slate-500 mt-1 line-clamp-2">${p.desc}</p>
+                            <p class="text-[#007FFF] font-extrabold text-base mt-2">${formaterPrix(p.prixUSD)}</p>
                         </div>
-                        <button onclick="supprimerDuPanier(${index})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>
+                        <div class="mt-4 space-y-2">
+                            <button onclick="ajouterAuPanier(${p.id})" class="w-full bg-[#0F2844] hover:bg-[#1a3a5f] text-white py-2 rounded-xl text-xs font-semibold shadow transition">
+                                <i class="fa-solid fa-cart-plus"></i> Ajouter au panier
+                            </button>
+                            <div class="flex gap-2">
+                                <a href="tel:${p.tel}" class="flex-1 bg-sky-50 text-[#007FFF] hover:bg-sky-100 text-center py-1.5 rounded-lg text-xs font-bold transition border border-sky-200">
+                                    <i class="fa-solid fa-phone"></i> Appeler
+                                </a>
+                                <a href="https://wa.me/${telClean}" target="_blank" class="flex-1 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 text-center py-1.5 rounded-lg text-xs font-bold transition border border-emerald-200">
+                                    <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 `;
             });
-            liste.innerHTML = html;
-            prixTotalEl.textContent = total + ' $';
+            grille.innerHTML = html;
+        }
+
+        // PUBLIER UN ARTICLE
+        function exposerArticle(event) {
+            event.preventDefault();
+            const nom = document.getElementById('pub-nom').value;
+            const prixUSD = parseFloat(document.getElementById('pub-prix').value);
+            const categorie = document.getElementById('pub-categorie').value;
+            const tel = document.getElementById('pub-tel').value;
+            const desc = document.getElementById('pub-desc').value;
+
+            const nouveauProduit = {
+                id: Date.now(),
+                nom,
+                prixUSD,
+                categorie,
+                tel,
+                desc: desc || "Aucune description fournie."
+            };
+
+            produits.unshift(nouveauProduit);
+            afficherProduits();
+            document.getElementById('form-publier').reset();
+            alert("Félicitations ! Votre article a été publié avec succès sur Wenzephone.");
+            naviguerVers('accueil');
+        }
+
+        // GESTION DU PANIER
+        function ajouterAuPanier(id) {
+            const p = produits.find(prod => prod.id === id);
+            if(p) {
+                panier.push(p);
+                mettreAJourBadge();
+                alert(p.nom + " ajouté au panier !");
+            }
+        }
+
+        function mettreAJourBadge() {
+            const badge = document.getElementById('badge-panier');
+            if(panier.length > 0) {
+                badge.textContent = panier.length;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function afficherPanier() {
+            const container = document.getElementById('contenu-panier');
+            const blocTotal = document.getElementById('bloc-total');
+            const texteTotal = document.getElementById('texte-total-panier');
+
+            if(panier.length === 0) {
+                container.innerHTML = '<p class="text-sm text-slate-500 text-center py-6">Votre panier est vide.</p>';
+                blocTotal.classList.add('hidden');
+                return;
+            }
+
+            let html = '';
+            let totalUSD = 0;
+            panier.forEach((item, index) => {
+                totalUSD += item.prixUSD;
+                html += `
+                    <div class="flex justify-between items-center border-b pb-2 text-sm">
+                        <div>
+                            <h4 class="font-bold text-slate-800">${item.nom}</h4>
+                            <p class="text-[#007FFF] font-semibold">${formaterPrix(item.prixUSD)}</p>
+                        </div>
+                        <button onclick="supprimerDuPanier(${index})" class="text-red-500 hover:text-red-700 text-xs"><i class="fa-solid fa-trash"></i> Supprimer</button>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            texteTotal.textContent = formaterPrix(totalUSD);
+            blocTotal.classList.remove('hidden');
         }
 
         function supprimerDuPanier(index) {
             panier.splice(index, 1);
-            mettreAJourPanier();
+            mettreAJourBadge();
+            afficherPanier();
         }
 
-        function ouvrirDiscussion(nom) {
-            document.getElementById('nom-interlocuteur').textContent = nom;
-            document.querySelectorAll('.page-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById('page-discussion').classList.remove('hidden');
+        // PAIEMENT MOBILE RDC
+        function validerPaiementMobile() {
+            if(panier.length === 0) return;
+            const modePaiement = document.querySelector('input[name="paiement"]:checked').value;
+            const telPaiement = document.getElementById('tel-paiement').value;
+
+            if(!telPaiement) {
+                alert("Veuillez entrer votre numéro de téléphone pour le paiement mobile.");
+                return;
+            }
+
+            let totalUSD = panier.reduce((sum, item) => sum + item.prixUSD, 0);
+            ventesTotalesUSD += totalUSD;
+            nombreCommandes += 1;
+
+            alert(`Paiement de ${formaterPrix(totalUSD)} initié avec succès via ${modePaiement} (${telPaiement}) !\nVotre commande est confirmée.`);
+            
+            panier = [];
+            mettreAJourBadge();
+            afficherPanier();
+            mettreAJourRevenus();
+            naviguerVers('revenus');
         }
 
-        function envoyerMessage() {
-            const input = document.getElementById('input-message');
-            const box = document.getElementById('box-messages');
-            if (input.value.trim() !== '') {
-                box.innerHTML += `<div class="bg-emerald-600 text-white p-2.5 rounded-2xl rounded-tr-none text-sm max-w-[80%] ml-auto">${input.value}</div>`;
+        // REVENUS
+        function mettreAJourRevenus() {
+            document.getElementById('stat-ventes').textContent = formaterPrix(ventesTotalesUSD);
+            document.getElementById('stat-commandes').textContent = nombreCommandes;
+            document.getElementById('stat-revenunet').textContent = formaterPrix(ventesTotalesUSD * 0.90);
+
+            const hist = document.getElementById('liste-historique');
+            if(nombreCommandes > 0) {
+                hist.innerHTML = `<div class="p-2 bg-sky-50 text-[#0F2844] rounded-lg flex justify-between border border-sky-200"><span>Vente #${nombreCommandes} validée</span> <strong>${formaterPrix(ventesTotalesUSD)}</strong></div>`;
+            }
+        }
+
+        // CHAT & MESSAGERIE
+        function ouvrirChat(nom, tel) {
+            const telClean = tel.replace(/\+/g, '').replace(/\s+/g, '');
+            document.getElementById('chat-nom').textContent = nom;
+            document.getElementById('link-appel').href = "tel:" + tel;
+            document.getElementById('link-whatsapp').href = "https://wa.me/" + telClean;
+            naviguerVers('chat');
+        }
+
+        function envoyerMessageChat() {
+            const input = document.getElementById('input-chat');
+            const box = document.getElementById('box-discussion');
+            if(input.value.trim() !== '') {
+                box.innerHTML += `<div class="bg-[#007FFF] text-white p-3 rounded-2xl rounded-tr-none max-w-[80%] ml-auto shadow-sm">${input.value}</div>`;
                 input.value = '';
                 box.scrollTop = box.scrollHeight;
             }
         }
 
-        function validerCommande() {
-            alert('Commande validée avec succès ! Merci d\'avoir utilisé Wenzephone.');
-            panier = [];
-            mettreAJourPanier();
-            switchTab('accueil');
-        }
+        window.onload = function() {
+            afficherProduits();
+        };
     </script>
 </body>
 </html>
