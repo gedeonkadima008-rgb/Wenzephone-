@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wenzephone - Marché & Électronique en RDC</title>
+    <title>Wenzephone - Marché Alimentaire & Électronique Kinshasa</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icônes -->
@@ -11,49 +11,57 @@
 </head>
 <body class="bg-[#F0F6FC] font-sans min-h-screen flex flex-col text-[#0F2844]">
 
-    <!-- MODAL D'INSCRIPTION / CONNEXION OBLIGATOIRE -->
-    <div id="modal-auth" class="fixed inset-0 bg-[#0F2844]/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 space-y-6 border-t-4 border-[#007FFF]">
+    <!-- MODAL D'INSCRIPTION / CONNEXION -->
+    <div id="modal-auth" class="fixed inset-0 bg-[#0F2844]/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 space-y-5 border-t-4 border-[#007FFF] relative">
+            <button onclick="fermerAuth()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold text-lg p-1">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
             <div class="text-center space-y-2">
                 <div class="w-16 h-16 bg-[#007FFF]/10 text-[#007FFF] rounded-2xl mx-auto flex items-center justify-center text-2xl font-bold shadow-inner">
-                    <i class="fa-solid fa-store"></i>
+                    <i class="fa-solid fa-user-plus"></i>
                 </div>
-                <h2 class="text-xl font-extrabold text-[#0F2844]">Bienvenue sur Wenzephone</h2>
-                <p class="text-xs text-slate-500">Veuillez vous inscrire ou vous connecter pour accéder au marché congolais.</p>
+                <h2 class="text-xl font-extrabold text-[#0F2844]">Accès Wenzephone RDC</h2>
+                <p class="text-xs text-slate-500">Connectez-vous selon votre profil (Client ou Vendeur).</p>
             </div>
 
             <form id="form-auth" onsubmit="connecterUtilisateur(event)" class="space-y-4 text-sm">
                 <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Nom complet ou Nom de la boutique</label>
-                    <input type="text" id="auth-nom" required placeholder="ex: Gédéon Kadima" class="w-full border rounded-xl p-3 focus:border-[#007FFF] focus:outline-none bg-slate-50">
+                    <label class="block font-semibold text-slate-700 mb-1">Nom complet / Nom de la boutique</label>
+                    <input type="text" id="auth-nom" required placeholder="ex: Maman Nsimba / Gédéon" class="w-full border rounded-xl p-3 focus:border-[#007FFF] focus:outline-none bg-slate-50">
                 </div>
                 <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Numéro de Téléphone (RDC)</label>
-                    <input type="tel" id="auth-tel" required placeholder="ex: +243 847 135 909" class="w-full border rounded-xl p-3 focus:border-[#007FFF] focus:outline-none bg-slate-50">
+                    <label class="block font-semibold text-slate-700 mb-1">Votre Numéro de Téléphone RDC (Réel)</label>
+                    <input type="tel" id="auth-tel" required placeholder="ex: 0847135909" class="w-full border rounded-xl p-3 focus:border-[#007FFF] focus:outline-none bg-slate-50">
                 </div>
                 <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Vous êtes :</label>
-                    <select id="auth-role" class="w-full border rounded-xl p-3 focus:border-[#007FFF] focus:outline-none bg-slate-50">
-                        <option value="Client">Client / Acheteur</option>
-                        <option value="Vendeur">Vendeur / Marchand</option>
+                    <label class="block font-semibold text-slate-700 mb-1">Je suis un :</label>
+                    <select id="auth-role" class="w-full border rounded-xl p-3 focus:border-[#007FFF] focus:outline-none bg-slate-50 font-bold text-[#007FFF]">
+                        <option value="Client">Client (Acheter & Commander)</option>
+                        <option value="Vendeur">Vendeur (Publier & Gérer mon stock)</option>
                     </select>
                 </div>
-                <button type="submit" class="w-full bg-[#007FFF] hover:bg-[#0065CC] text-white font-bold py-3.5 rounded-xl shadow-lg transition">
-                    Accéder à la plateforme <i class="fa-solid fa-arrow-right ml-2"></i>
+                <button type="submit" class="w-full bg-[#007FFF] hover:bg-[#0065CC] text-white font-bold py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-check-circle"></i> Valider et Entrer
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- BANDEAU SUPÉRIEUR (COULEURS RDC : Bleu ciel dominant, filet jaune/rouge) -->
+    <!-- BANDEAU SUPÉRIEUR -->
     <div class="bg-[#007FFF] text-white text-xs py-2 px-4 sm:px-8 flex justify-between items-center border-b-2 border-[#FCD116]">
         <div class="flex items-center gap-3">
-            <a href="https://wa.me/243847135909" target="_blank" class="inline-flex items-center gap-1 font-medium hover:text-[#FCD116] transition">
-                <i class="fa-brands fa-whatsapp text-[#FCD116] text-sm"></i> WhatsApp Agent: +243 847 135 909
-            </a>
+            <span class="inline-flex items-center gap-1 font-medium">
+                <i class="fa-brands fa-whatsapp text-[#FCD116] text-sm"></i> Kinshasa Market Support
+            </span>
         </div>
         <div class="flex items-center gap-3">
+            <button id="btn-ouvrir-auth" onclick="ouvrirAuth()" class="bg-[#FCD116] hover:bg-[#e5bc00] text-[#0F2844] font-extrabold px-3 py-1 rounded-lg shadow-sm transition flex items-center gap-1">
+                <i class="fa-solid fa-user-lock"></i> S'inscrire / Se connecter
+            </button>
             <span id="label-profil-connecte" class="hidden font-semibold text-[#FCD116]"></span>
+            
             <label for="select-devise" class="font-semibold text-white/90">Devise :</label>
             <select id="select-devise" onchange="changerDevise()" class="bg-[#0055B3] text-white rounded px-2 py-1 text-xs border border-white/30 focus:outline-none font-bold">
                 <option value="USD">USD ($)</option>
@@ -77,98 +85,83 @@
         </div>
     </header>
 
-    <!-- CONTENU PRINCIPAL DYNAMIQUE -->
+    <!-- CONTENU PRINCIPAL -->
     <main class="max-w-4xl mx-auto w-full flex-1 p-4 pb-28">
 
-        <!-- 1. PAGE ACCUEIL -->
+        <!-- 1. PAGE ACCUEIL (VITRINE PUBLIQUE & ARTICLES KINSHASA) -->
         <section id="page-accueil" class="section-page space-y-6">
-            <div class="bg-gradient-to-r from-[#007FFF] to-[#0F2844] text-white p-5 rounded-2xl shadow-xl flex justify-between items-center relative overflow-hidden">
-                <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-[#FCD116]/20 rounded-full blur-xl"></div>
-                <div>
-                    <h2 class="text-lg font-bold text-[#FCD116]">Marché en Ligne RDC</h2>
-                    <p class="text-xs text-slate-100 mt-1">Achetez et vendez en toute sécurité en Francs Congolais ou en Dollars.</p>
+            <div class="bg-gradient-to-r from-[#007FFF] via-[#0055B3] to-[#0F2844] text-white p-6 rounded-3xl shadow-xl border-b-4 border-[#FCD116] relative overflow-hidden">
+                <div class="max-w-xl space-y-3 z-10 relative">
+                    <span class="bg-[#FCD116] text-[#0F2844] text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                        <i class="fa-solid fa-basket-shopping"></i> Produits Locaux & Vivriers Kinshasa
+                    </span>
+                    <h2 class="text-xl sm:text-2xl font-black leading-tight text-white">
+                        Le Grand Marché Numérique de la RDC à portée de main !
+                    </h2>
+                    <p class="text-xs text-slate-200 leading-relaxed">
+                        Retrouvez le pondu frais, les matembele, le maïs, le charbon et l'électronique directement auprès des vendeurs de confiance. Paiement sécurisé (M-Pesa, Orange, Airtel).
+                    </p>
+                    <div class="pt-2 flex flex-wrap gap-3">
+                        <button onclick="ouvrirAuth()" class="bg-[#FCD116] hover:bg-[#e5bc00] text-[#0F2844] font-extrabold text-xs py-2.5 px-4 rounded-xl shadow-lg transition flex items-center gap-2">
+                            <i class="fa-solid fa-user-plus"></i> S'inscrire maintenant
+                        </button>
+                        <button onclick="controlerAccesPublier()" class="bg-white/10 hover:bg-white/20 text-white font-bold text-xs py-2.5 px-4 rounded-xl transition border border-white/30">
+                            + Espace Vendeur (Publier)
+                        </button>
+                    </div>
                 </div>
-                <button onclick="naviguerVers('publier')" class="bg-[#FCD116] hover:bg-[#e5bc00] text-[#0F2844] font-extrabold text-xs py-2.5 px-3.5 rounded-xl shadow transition z-10">
-                    + Exposer un article
-                </button>
             </div>
 
             <div class="flex justify-between items-center">
-                <h3 class="font-bold text-gray-800 text-base">Articles disponibles</h3>
-                <span class="text-xs text-slate-500 font-medium" id="compteur-articles">2 articles disponibles</span>
+                <h3 class="font-bold text-[#0F2844] text-base">Aliments & Articles Disponibles au Marché</h3>
+                <span class="text-xs text-slate-500 font-medium" id="compteur-articles">0 article disponible</span>
             </div>
 
             <div id="grille-produits" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
         </section>
 
-        <!-- 2. PAGE PUBLIER -->
+        <!-- 2. PAGE PUBLIER (RÉSERVÉE AUX VENDEURS) -->
         <section id="page-publier" class="section-page hidden max-w-lg mx-auto bg-white p-6 rounded-2xl shadow-lg border border-slate-200 space-y-4">
             <h2 class="text-lg font-bold text-[#0F2844] flex items-center gap-2 border-b pb-3">
-                <i class="fa-solid fa-plus-circle text-[#007FFF]"></i> Exposer un nouvel article
+                <i class="fa-solid fa-box-archive text-[#007FFF]"></i> Gestion Stock & Publication Vendeur
             </h2>
             <form id="form-publier" onsubmit="exposerArticle(event)" class="space-y-4 text-sm">
                 <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Nom de l'article</label>
-                    <input type="text" id="pub-nom" required placeholder="ex: iPhone 13, Sac de Riz..." class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none">
+                    <label class="block font-semibold text-slate-700 mb-1">Nom du produit (ex: Pondu frais, Maïs, etc.)</label>
+                    <input type="text" id="pub-nom" required placeholder="ex: Paquet de Pondu Frais (Feuilles de manioc)" class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Prix ($ USD)</label>
-                        <input type="number" step="0.01" id="pub-prix" required placeholder="ex: 45" class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none">
+                        <input type="number" step="0.01" id="pub-prix" required placeholder="ex: 3" class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none">
                     </div>
                     <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Catégorie</label>
-                        <select id="pub-categorie" class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none">
-                            <option>Électronique</option>
-                            <option>Alimentation</option>
-                            <option>Habillement</option>
-                            <option>Autre</option>
-                        </select>
+                        <label class="block font-semibold text-slate-700 mb-1">Quantité en Stock</label>
+                        <input type="number" id="pub-stock" required placeholder="ex: 25" class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none font-bold text-[#007FFF]">
                     </div>
                 </div>
                 <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Numéro WhatsApp / Téléphone</label>
-                    <input type="tel" id="pub-tel" required placeholder="ex: +243847135909" class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none">
+                    <label class="block font-semibold text-slate-700 mb-1">Lien de l'image réelle (Optionnel)</label>
+                    <input type="url" id="pub-image" placeholder="Lien URL de la photo" class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none">
                 </div>
                 <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Description</label>
-                    <textarea id="pub-desc" rows="2" placeholder="État du produit..." class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none"></textarea>
+                    <label class="block font-semibold text-slate-700 mb-1">Votre Numéro de Contact (WhatsApp / Appel)</label>
+                    <input type="tel" id="pub-tel" required placeholder="ex: 0847135909" class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Description / Disponibilité</label>
+                    <textarea id="pub-desc" rows="2" placeholder="Ex: Frais du jour récolté au marché central..." class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none"></textarea>
                 </div>
                 <button type="submit" class="w-full bg-[#007FFF] hover:bg-[#0065CC] text-white font-bold py-3 rounded-xl shadow transition">
-                    Mettre en ligne
+                    Mettre en ligne sur le marché
                 </button>
             </form>
         </section>
 
         <!-- 3. PAGE MESSAGERIE -->
         <section id="page-messagerie" class="section-page hidden space-y-4">
-            <h2 class="text-lg font-bold text-[#0F2844]">Espace Échanges & Discussions</h2>
-            <div class="bg-white rounded-2xl shadow border border-slate-200 divide-y">
-                <div onclick="ouvrirChat('Agent WhatsApp Wenzephone', '+243847135909')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-green-100 text-green-700 rounded-full flex items-center justify-center font-bold">
-                            <i class="fa-brands fa-whatsapp text-lg"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-sm text-[#0F2844]">Agent Support principal</h4>
-                            <p class="text-xs text-slate-500">+243 847 135 909</p>
-                        </div>
-                    </div>
-                    <span class="text-xs text-emerald-600 font-semibold">En ligne</span>
-                </div>
-                <div onclick="ouvrirChat('Service Vente & Support', '+243824248520')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-[#007FFF]/10 text-[#007FFF] rounded-full flex items-center justify-center font-bold">
-                            <i class="fa-solid fa-headset text-lg"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-sm text-[#0F2844]">Support Ventes II</h4>
-                            <p class="text-xs text-slate-500">+243 824 248 520</p>
-                        </div>
-                    </div>
-                    <span class="text-xs text-slate-400">Disponible</span>
-                </div>
-            </div>
+            <h2 class="text-lg font-bold text-[#0F2844]">Contacts Directs des Vendeurs</h2>
+            <div id="liste-contacts" class="bg-white rounded-2xl shadow border border-slate-200 divide-y"></div>
         </section>
 
         <!-- 3.1 CHAT INDIVIDUEL -->
@@ -177,22 +170,22 @@
                 <div class="flex items-center gap-3">
                     <button onclick="naviguerVers('messagerie')" class="text-white hover:text-slate-200"><i class="fa-solid fa-arrow-left"></i></button>
                     <div>
-                        <h3 id="chat-nom" class="font-bold text-sm">Agent Wenzephone</h3>
-                        <p class="text-[10px] text-[#FCD116]">Contact direct RDC</p>
+                        <h3 id="chat-nom" class="font-bold text-sm">Vendeur</h3>
+                        <p id="chat-num-label" class="text-[10px] text-[#FCD116]">Numéro authentique</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
                     <a id="link-appel" href="#" class="bg-white text-[#007FFF] w-8 h-8 rounded-full flex items-center justify-center text-xs shadow font-bold" title="Appeler">
                         <i class="fa-solid fa-phone"></i>
                     </a>
-                    <a id="link-whatsapp" href="#" target="_blank" class="bg-green-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-xs shadow" title="WhatsApp Direct">
+                    <a id="link-whatsapp" href="#" target="_blank" class="bg-green-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-xs shadow" title="WhatsApp">
                         <i class="fa-brands fa-whatsapp"></i>
                     </a>
                 </div>
             </div>
             <div id="box-discussion" class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50 text-sm">
                 <div class="bg-white border p-3 rounded-2xl rounded-tl-none max-w-[80%] shadow-sm">
-                    Bonjour ! Je suis l'agent Wenzephone. Comment puis-je vous aider pour vos transactions ?
+                    Bonjour ! Je souhaite commander vos produits sur Wenzephone.
                 </div>
             </div>
             <div class="p-3 border-t bg-white flex gap-2 rounded-b-2xl">
@@ -203,36 +196,41 @@
             </div>
         </section>
 
-        <!-- 4. PAGE REVENUS -->
+        <!-- 4. PAGE REVENUS (RÉSERVÉE STRICTEMENT AUX VENDEURS) -->
         <section id="page-revenus" class="section-page hidden space-y-4">
             <h2 class="text-lg font-bold text-[#0F2844] flex items-center gap-2">
-                <i class="fa-solid fa-chart-line text-[#007FFF]"></i> Tableau de bord & Revenus Vendeur
+                <i class="fa-solid fa-chart-line text-[#007FFF]"></i> Bilan & Suivi des Ventes (Espace Vendeur)
             </h2>
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                <div class="bg-white p-4 rounded-2xl shadow border border-slate-200">
-                    <p class="text-xs text-slate-500">Ventes Totales</p>
-                    <p id="stat-ventes" class="text-xl font-bold text-[#0F2844] mt-1">$ 0.00</p>
-                </div>
-                <div class="bg-white p-4 rounded-2xl shadow border border-slate-200">
-                    <p class="text-xs text-slate-500">Commandes</p>
-                    <p id="stat-commandes" class="text-xl font-bold text-[#007FFF] mt-1">0</p>
-                </div>
-                <div class="bg-white p-4 rounded-2xl shadow border border-slate-200 col-span-2 sm:col-span-1">
-                    <p class="text-xs text-slate-500">Revenu Net (90%)</p>
-                    <p id="stat-revenunet" class="text-xl font-bold text-emerald-600 mt-1">$ 0.00</p>
-                </div>
+            <div id="avertissement-client" class="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-2xl text-xs hidden">
+                <i class="fa-solid fa-triangle-exclamation"></i> Accès restreint : Cet espace de bilan et de gestion du stock est strictement réservé aux vendeurs enregistrés.
             </div>
-            <div class="bg-white p-5 rounded-2xl shadow border border-slate-200 space-y-3">
-                <h3 class="font-bold text-sm text-slate-800">Historique des transactions</h3>
-                <div id="liste-historique" class="text-xs text-slate-500 space-y-2">
-                    <p class="py-4 text-center">Aucune vente enregistrée.</p>
+            <div id="contenu-revenus-vendeur" class="space-y-4">
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <div class="bg-white p-4 rounded-2xl shadow border border-slate-200">
+                        <p class="text-xs text-slate-500">Ventes Totales</p>
+                        <p id="stat-ventes" class="text-xl font-bold text-[#0F2844] mt-1">$ 0.00</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl shadow border border-slate-200">
+                        <p class="text-xs text-slate-500">Commandes Reçues</p>
+                        <p id="stat-commandes" class="text-xl font-bold text-[#007FFF] mt-1">0</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl shadow border border-slate-200 col-span-2 sm:col-span-1">
+                        <p class="text-xs text-slate-500">Revenu Net (90%)</p>
+                        <p id="stat-revenunet" class="text-xl font-bold text-emerald-600 mt-1">$ 0.00</p>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow border border-slate-200 space-y-3">
+                    <h3 class="font-bold text-sm text-slate-800">Historique des commandes validées</h3>
+                    <div id="liste-historique" class="text-xs text-slate-500 space-y-2">
+                        <p class="py-4 text-center">Aucune vente enregistrée pour le moment.</p>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- 5. PAGE PANIER & PAIEMENT MOBILE RDC -->
+        <!-- 5. PAGE PANIER (CLIENTS) -->
         <section id="page-panier" class="section-page hidden space-y-4">
-            <h2 class="text-lg font-bold text-[#0F2844]">Mon Panier & Paiement Sécurisé</h2>
+            <h2 class="text-lg font-bold text-[#0F2844]">Mon Panier & Paiement Mobile</h2>
             <div id="contenu-panier" class="bg-white p-4 rounded-2xl shadow border border-slate-200 space-y-3">
                 <p class="text-sm text-slate-500 text-center py-6">Votre panier est vide.</p>
             </div>
@@ -243,10 +241,8 @@
                     <span id="texte-total-panier" class="text-[#007FFF] text-lg">$ 0.00</span>
                 </div>
 
-                <!-- OPTIONS DE PAIEMENT MOBILE RDC -->
                 <div class="space-y-3">
-                    <label class="block font-bold text-sm text-slate-800">Mode de paiement mobile :</label>
-                    
+                    <label class="block font-bold text-sm text-slate-800">Mode de paiement mobile RDC :</label>
                     <div class="grid grid-cols-3 gap-2">
                         <label class="border-2 border-slate-200 rounded-xl p-3 flex flex-col items-center justify-center cursor-pointer hover:border-red-600 transition bg-red-50/30">
                             <input type="radio" name="paiement" value="Airtel Money" checked class="mb-1 accent-red-600">
@@ -263,13 +259,13 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Numéro de téléphone pour le débit :</label>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Votre numéro de téléphone (pour le débit) :</label>
                         <input type="tel" id="tel-paiement" placeholder="ex: 0847135909" class="w-full border rounded-xl p-2.5 text-sm focus:border-[#007FFF] focus:outline-none">
                     </div>
                 </div>
 
                 <button onclick="validerPaiementMobile()" class="w-full bg-[#007FFF] hover:bg-[#0065CC] text-white font-bold py-3.5 rounded-xl shadow-lg transition text-sm flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-lock"></i> Payer maintenant
+                    <i class="fa-solid fa-lock"></i> Valider la commande et Payer
                 </button>
             </div>
         </section>
@@ -282,53 +278,112 @@
             <button onclick="naviguerVers('accueil')" id="nav-accueil" class="flex flex-col items-center text-[#007FFF] text-[11px] font-bold">
                 <i class="fa-solid fa-house text-lg"></i> Accueil
             </button>
-            <button onclick="naviguerVers('publier')" id="nav-publier" class="flex flex-col items-center text-slate-400 text-[11px] font-semibold">
+            <button onclick="controlerAccesPublier()" id="nav-publier" class="flex flex-col items-center text-slate-400 text-[11px] font-semibold">
                 <i class="fa-solid fa-plus-circle text-lg"></i> Publier
             </button>
             <button onclick="naviguerVers('messagerie')" id="nav-messagerie" class="flex flex-col items-center text-slate-400 text-[11px] font-semibold">
                 <i class="fa-solid fa-comments text-lg"></i> Messagerie
             </button>
             <button onclick="naviguerVers('revenus')" id="nav-revenus" class="flex flex-col items-center text-slate-400 text-[11px] font-semibold">
-                <i class="fa-solid fa-chart-line text-lg"></i> Revenus
+                <i class="fa-solid fa-chart-line text-lg"></i> Bilan Stock
             </button>
         </div>
     </nav>
-
-    <!-- SCRIPT JAVASCRIPT INTELLIGENT -->
+    <!-- SCRIPT JAVASCRIPT GESTION CLIENT / VENDEUR & PRODUITS KINSHASA -->
     <script>
         const TAUX_CDF = 2800;
         let deviseActuelle = 'USD';
         let utilisateurActuel = null;
 
-        // Produits de base avec numéros réels
+        // Produits de base typiques de Kinshasa avec images réelles d'illustration
         let produits = [
-            { id: 1, nom: "Smartphone Android 64GB", prixUSD: 120, categorie: "Électronique", tel: "+243847135909", desc: "Téléphone neuf sous carton." },
-            { id: 2, nom: "Sac de Riz 25kg Premium", prixUSD: 30, categorie: "Alimentation", tel: "+243824248520", desc: "Riz de qualité supérieure." }
+            { id: 1, nom: "Pondu Frais (Feuilles de manioc pilées)", prixUSD: 2.50, stock: 40, categorie: "Alimentation", image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400", tel: "+243847135909", vendeurNom: "Maman Nsimba", desc: "Pondu frais du jour, bien tendre du marché." },
+            { id: 2, nom: "Matembele (Feuilles de patates douces)", prixUSD: 2.00, stock: 30, categorie: "Alimentation", image: "https://images.unsplash.com/photo-1594282488362-7994cd6324d5?w=400", tel: "+243824248520", vendeurNom: "Papa Kanku", desc: "Matembele frais riches en vitamines." },
+            { id: 3, nom: "Maïs en Poudre (Fufu / Semoule)", prixUSD: 35.00, stock: 15, categorie: "Alimentation", image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400", tel: "+243847135909", vendeurNom: "Marché Central Kin", desc: "Sac de maïs blanc de qualité supérieure." },
+            { id: 4, nom: "Charbon de Bois (Sac)", prixUSD: 12.00, stock: 50, categorie: "Autre", image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400", tel: "+243824248520", vendeurNom: "Dépôt Energie RDC", desc: "Sac de charbon dur et sec." }
         ];
 
         let panier = [];
         let ventesTotalesUSD = 0;
         let nombreCommandes = 0;
 
-        // GESTION DE L'INSCRIPTION / CONNEXION
-        function connecterUtilisateur(event) {
-            event.preventDefault();
-            const nom = document.getElementById('auth-nom').value;
-            const tel = document.getElementById('auth-tel').value;
-            const role = document.getElementById('auth-role').value;
-
-            utilisateurActuel = { nom, tel, role };
-            
-            document.getElementById('modal-auth').classList.add('hidden');
-            
-            const lbl = document.getElementById('label-profil-connecte');
-            lbl.textContent = `👤 ${nom} (${role})`;
-            lbl.classList.remove('hidden');
-
-            alert(`Bienvenue ${nom} sur Wenzephone ! Connexion réussie.`);
+        function ouvrirAuth() {
+            document.getElementById('modal-auth').classList.remove('hidden');
         }
 
-        // NAVIGATION ENTRE LES PAGES
+        function fermerAuth() {
+            document.getElementById('modal-auth').classList.add('hidden');
+        }
+
+        // CONTRÔLE D'ACCÈS STRICT POUR LA PUBLICATION
+        function controlerAccesPublier() {
+            if(!utilisateurActuel) {
+                alert("🔒 Accès restreint !\nVeuillez d'abord vous connecter en tant que Vendeur pour publier des articles.");
+                ouvrirAuth();
+            } else if(utilisateurActuel.role !== 'Vendeur') {
+                alert("❌ Vous êtes connecté en tant que Client.\nSeuls les Vendeurs peuvent publier et gérer le stock.");
+                naviguerVers('accueil');
+            } else {
+                document.getElementById('pub-tel').value = utilisateurActuel.tel;
+                naviguerVers('publier');
+            }
+        }
+
+        function nettoyerNumero(tel) {
+            let t = tel.replace(/\s+/g, '').replace(/-/g, '');
+            if(t.startsWith('0')) {
+                t = '243' + t.substring(1);
+            } else if(t.startsWith('+243')) {
+                t = t.substring(1);
+            }
+            return t;
+        }
+
+        function validerNumeroRDC(telephone) {
+            const telPropre = telephone.replace(/\s+/g, '').replace(/-/g, '');
+            return /^(?:\+243|243|0)[89][0-9]{8}$/.test(telPropre);
+        }
+
+        function connecterUtilisateur(event) {
+            event.preventDefault();
+            const nom = document.getElementById('auth-nom').value.trim();
+            const tel = document.getElementById('auth-tel').value.trim();
+            const role = document.getElementById('auth-role').value;
+
+            if (!validerNumeroRDC(tel)) {
+                alert("❌ Veuillez entrer un vrai numéro RDC valide (ex: 0847135909).");
+                return;
+            }
+
+            utilisateurActuel = { nom, tel, role };
+            fermerAuth();
+
+            const btnAuth = document.getElementById('btn-ouvrir-auth');
+            const lbl = document.getElementById('label-profil-connecte');
+
+            if(btnAuth) btnAuth.classList.add('hidden');
+            if(lbl) {
+                lbl.textContent = `👤 ${nom} (${role})`;
+                lbl.classList.remove('hidden');
+            }
+
+            // GESTION DE L'AFFICHAGE SELON LE RÔLE CLIENT / VENDEUR
+            const avertissementClient = document.getElementById('avertissement-client');
+            const contenuVendeur = document.getElementById('contenu-revenus-vendeur');
+
+            if(role === 'Client') {
+                avertissementClient.classList.remove('hidden');
+                contenuVendeur.classList.add('hidden');
+            } else {
+                avertissementClient.classList.add('hidden');
+                contenuVendeur.classList.remove('hidden');
+                document.getElementById('pub-tel').value = tel;
+            }
+
+            alert(`✅ Bienvenue ${nom} !\nConnecté avec succès en tant que ${role}.`);
+            rafraichirContacts();
+        }
+
         function naviguerVers(pageId) {
             document.querySelectorAll('.section-page').forEach(el => el.classList.add('hidden'));
             const cible = document.getElementById('page-' + pageId);
@@ -349,7 +404,6 @@
             }
         }
 
-        // FORMATAGE DE LA DEVISE
         function formaterPrix(prixUSD) {
             if (deviseActuelle === 'CDF') {
                 return (prixUSD * TAUX_CDF).toLocaleString('fr-FR') + ' FC';
@@ -364,34 +418,46 @@
             mettreAJourRevenus();
         }
 
-        // AFFICHAGE DES PRODUITS
+        // AFFICHAGE DES PRODUITS AVEC GESTION DU STOCK
         function afficherProduits() {
             const grille = document.getElementById('grille-produits');
             document.getElementById('compteur-articles').textContent = produits.length + " article(s) disponible(s)";
             
             let html = '';
             produits.forEach(p => {
-                const telClean = p.tel.replace(/\+/g, '').replace(/\s+/g, '');
+                const telClean = nettoyerNumero(p.tel);
+                const imgTag = p.image 
+                    ? `<img src="${p.image}" class="w-full h-full object-cover" alt="${p.nom}" onError="this.src='https://via.placeholder.com/300x200?text=Wenzephone'">`
+                    : `<i class="fa-solid fa-basket-shopping text-4xl text-slate-300"></i>`;
+
+                const badgeStock = p.stock > 0 
+                    ? `<span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded-full font-bold">Stock : ${p.stock} dispo</span>`
+                    : `<span class="bg-red-100 text-red-800 text-[10px] px-2 py-0.5 rounded-full font-bold">Rupture de stock</span>`;
+
+                const boutonAchat = p.stock > 0
+                    ? `<button onclick="ajouterAuPanier(${p.id})" class="w-full bg-[#0F2844] hover:bg-[#1a3a5f] text-white py-2 rounded-xl text-xs font-semibold shadow transition"><i class="fa-solid fa-cart-plus"></i> Ajouter au panier</button>`
+                    : `<button disabled class="w-full bg-slate-300 text-slate-500 py-2 rounded-xl text-xs font-bold cursor-not-allowed">Indisponible</button>`;
+
                 html += `
                     <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex flex-col justify-between">
                         <div>
-                            <div class="h-32 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 mb-3">
-                                <i class="fa-solid fa-box-open text-4xl"></i>
+                            <div class="h-36 bg-slate-100 rounded-xl flex items-center justify-center overflow-hidden mb-3 relative">
+                                ${imgTag}
+                                <div class="absolute top-2 right-2">${badgeStock}</div>
                             </div>
                             <span class="text-[10px] bg-[#007FFF]/10 text-[#007FFF] px-2 py-0.5 rounded-full font-bold">${p.categorie}</span>
                             <h4 class="font-bold text-[#0F2844] text-sm mt-1">${p.nom}</h4>
                             <p class="text-xs text-slate-500 mt-1 line-clamp-2">${p.desc}</p>
+                            <p class="text-[10px] text-slate-400 mt-1"><i class="fa-solid fa-user"></i> Vendeur: <strong>${p.vendeurNom}</strong></p>
                             <p class="text-[#007FFF] font-extrabold text-base mt-2">${formaterPrix(p.prixUSD)}</p>
                         </div>
                         <div class="mt-4 space-y-2">
-                            <button onclick="ajouterAuPanier(${p.id})" class="w-full bg-[#0F2844] hover:bg-[#1a3a5f] text-white py-2 rounded-xl text-xs font-semibold shadow transition">
-                                <i class="fa-solid fa-cart-plus"></i> Ajouter au panier
-                            </button>
+                            ${boutonAchat}
                             <div class="flex gap-2">
                                 <a href="tel:${p.tel}" class="flex-1 bg-sky-50 text-[#007FFF] hover:bg-sky-100 text-center py-1.5 rounded-lg text-xs font-bold transition border border-sky-200">
                                     <i class="fa-solid fa-phone"></i> Appeler
                                 </a>
-                                <a href="https://wa.me/${telClean}" target="_blank" class="flex-1 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 text-center py-1.5 rounded-lg text-xs font-bold transition border border-emerald-200">
+                                <a href="https://wa.me/${telClean}?text=Bonjour%20${encodeURIComponent(p.vendeurNom)},%20je%20souhaite%20commander%20:${encodeURIComponent(p.nom)}" target="_blank" class="flex-1 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 text-center py-1.5 rounded-lg text-xs font-bold transition border border-emerald-200">
                                     <i class="fa-brands fa-whatsapp"></i> WhatsApp
                                 </a>
                             </div>
@@ -402,38 +468,76 @@
             grille.innerHTML = html;
         }
 
-        // PUBLIER UN ARTICLE
+        // PUBLICATION PAR LE VENDEUR
         function exposerArticle(event) {
             event.preventDefault();
             const nom = document.getElementById('pub-nom').value;
             const prixUSD = parseFloat(document.getElementById('pub-prix').value);
-            const categorie = document.getElementById('pub-categorie').value;
+            const stock = parseInt(document.getElementById('pub-stock').value);
+            const image = document.getElementById('pub-image').value;
             const tel = document.getElementById('pub-tel').value;
             const desc = document.getElementById('pub-desc').value;
+
+            if (!validerNumeroRDC(tel)) {
+                alert("❌ Numéro invalide !");
+                return;
+            }
 
             const nouveauProduit = {
                 id: Date.now(),
                 nom,
                 prixUSD,
-                categorie,
+                stock,
+                categorie: "Alimentation",
+                image,
                 tel,
-                desc: desc || "Aucune description fournie."
+                vendeurNom: utilisateurActuel ? utilisateurActuel.nom : "Vendeur Kinshasa",
+                desc: desc || "Produit frais du marché."
             };
 
             produits.unshift(nouveauProduit);
             afficherProduits();
+            rafraichirContacts();
             document.getElementById('form-publier').reset();
-            alert("Félicitations ! Votre article a été publié avec succès sur Wenzephone.");
+            alert("🎉 Produit publié avec succès sur le marché !");
             naviguerVers('accueil');
         }
 
-        // GESTION DU PANIER
+        function rafraichirContacts() {
+            const container = document.getElementById('liste-contacts');
+            let html = '';
+            let vus = new Set();
+            produits.forEach(p => {
+                if(!vus.has(p.tel)) {
+                    vus.add(p.tel);
+                    html += `
+                        <div onclick="ouvrirChat('${p.vendeurNom}', '${p.tel}')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-[#007FFF]/10 text-[#007FFF] rounded-full flex items-center justify-center font-bold">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-[#0F2844]">${p.vendeurNom}</h4>
+                                    <p class="text-xs text-slate-500">Contact: ${p.tel}</p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-emerald-600 font-semibold"><i class="fa-brands fa-whatsapp"></i> Discuter</span>
+                        </div>
+                    `;
+                }
+            });
+            container.innerHTML = html;
+        }
+
+        // PANIER ET RÉDUCTION AUTOMATIQUE DU STOCK À LA COMMANDE
         function ajouterAuPanier(id) {
             const p = produits.find(prod => prod.id === id);
-            if(p) {
+            if(p && p.stock > 0) {
                 panier.push(p);
                 mettreAJourBadge();
                 alert(p.nom + " ajouté au panier !");
+            } else {
+                alert("Désolé, ce produit est en rupture de stock.");
             }
         }
 
@@ -468,7 +572,7 @@
                             <h4 class="font-bold text-slate-800">${item.nom}</h4>
                             <p class="text-[#007FFF] font-semibold">${formaterPrix(item.prixUSD)}</p>
                         </div>
-                        <button onclick="supprimerDuPanier(${index})" class="text-red-500 hover:text-red-700 text-xs"><i class="fa-solid fa-trash"></i> Supprimer</button>
+                        <button onclick="supprimerDuPanier(${index})" class="text-red-500 hover:text-red-700 text-xs"><i class="fa-solid fa-trash"></i> Retirer</button>
                     </div>
                 `;
             });
@@ -483,31 +587,39 @@
             afficherPanier();
         }
 
-        // PAIEMENT MOBILE RDC
+        // VALIDATION DE COMMANDE & RÉDUCTION DU STOCK
         function validerPaiementMobile() {
             if(panier.length === 0) return;
             const modePaiement = document.querySelector('input[name="paiement"]:checked').value;
             const telPaiement = document.getElementById('tel-paiement').value;
 
-            if(!telPaiement) {
-                alert("Veuillez entrer votre numéro de téléphone pour le paiement mobile.");
+            if(!validerNumeroRDC(telPaiement)) {
+                alert("❌ Entrez un numéro RDC valide pour le paiement.");
                 return;
             }
+
+            // Réduire automatiquement la quantité en stock pour chaque article acheté
+            panier.forEach(item => {
+                let prod = produits.find(p => p.id === item.id);
+                if(prod && prod.stock > 0) {
+                    prod.stock -= 1;
+                }
+            });
 
             let totalUSD = panier.reduce((sum, item) => sum + item.prixUSD, 0);
             ventesTotalesUSD += totalUSD;
             nombreCommandes += 1;
 
-            alert(`Paiement de ${formaterPrix(totalUSD)} initié avec succès via ${modePaiement} (${telPaiement}) !\nVotre commande est confirmée.`);
+            alert(`✅ Commande validée et payée avec succès via ${modePaiement} (${telPaiement}) !\nLe stock a été mis à jour.`);
             
             panier = [];
             mettreAJourBadge();
             afficherPanier();
+            afficherProduits();
             mettreAJourRevenus();
-            naviguerVers('revenus');
+            naviguerVers('accueil');
         }
 
-        // REVENUS
         function mettreAJourRevenus() {
             document.getElementById('stat-ventes').textContent = formaterPrix(ventesTotalesUSD);
             document.getElementById('stat-commandes').textContent = nombreCommandes;
@@ -515,14 +627,14 @@
 
             const hist = document.getElementById('liste-historique');
             if(nombreCommandes > 0) {
-                hist.innerHTML = `<div class="p-2 bg-sky-50 text-[#0F2844] rounded-lg flex justify-between border border-sky-200"><span>Vente #${nombreCommandes} validée</span> <strong>${formaterPrix(ventesTotalesUSD)}</strong></div>`;
+                hist.innerHTML = `<div class="p-2 bg-sky-50 text-[#0F2844] rounded-lg flex justify-between border border-sky-200"><span>Commande #${nombreCommandes}</span> <strong>${formaterPrix(ventesTotalesUSD)}</strong></div>`;
             }
         }
 
-        // CHAT & MESSAGERIE
         function ouvrirChat(nom, tel) {
-            const telClean = tel.replace(/\+/g, '').replace(/\s+/g, '');
+            const telClean = nettoyerNumero(tel);
             document.getElementById('chat-nom').textContent = nom;
+            document.getElementById('chat-num-label').textContent = tel;
             document.getElementById('link-appel').href = "tel:" + tel;
             document.getElementById('link-whatsapp').href = "https://wa.me/" + telClean;
             naviguerVers('chat');
@@ -531,7 +643,7 @@
         function envoyerMessageChat() {
             const input = document.getElementById('input-chat');
             const box = document.getElementById('box-discussion');
-            if(input.value.trim() !== '') {
+            if(input && input.value.trim() !== '') {
                 box.innerHTML += `<div class="bg-[#007FFF] text-white p-3 rounded-2xl rounded-tr-none max-w-[80%] ml-auto shadow-sm">${input.value}</div>`;
                 input.value = '';
                 box.scrollTop = box.scrollHeight;
@@ -540,6 +652,7 @@
 
         window.onload = function() {
             afficherProduits();
+            rafraichirContacts();
         };
     </script>
 </body>
