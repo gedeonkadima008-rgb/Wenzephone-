@@ -76,7 +76,10 @@
             <h1 onclick="naviguerVers('accueil')" class="text-xl font-extrabold flex items-center gap-2 cursor-pointer text-[#007FFF]">
                 <i class="fa-solid fa-store text-[#FCD116]"></i> Wenzephone
             </h1>
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3">
+                <button onclick="ouvrirConnexionAdmin()" class="text-xs text-amber-300 bg-amber-950/40 hover:bg-amber-900/60 px-2.5 py-1 rounded-lg font-semibold transition border border-amber-500/40 flex items-center gap-1">
+                    <i class="fa-solid fa-user-shield"></i> Admin
+                </button>
                 <button onclick="naviguerVers('panier')" class="relative p-2 text-slate-200 hover:text-[#007FFF] transition">
                     <i class="fa-solid fa-cart-shopping text-xl"></i>
                     <span id="badge-panier" class="absolute -top-1 -right-1 bg-[#CE1126] text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold hidden">0</span>
@@ -88,7 +91,7 @@
     <!-- CONTENU PRINCIPAL -->
     <main class="max-w-4xl mx-auto w-full flex-1 p-4 pb-28">
 
-        <!-- 1. PAGE ACCUEIL (VITRINE PUBLIQUE & ARTICLES KINSHASA) -->
+        <!-- 1. PAGE ACCUEIL (VITRINE) -->
         <section id="page-accueil" class="section-page space-y-6">
             <div class="bg-gradient-to-r from-[#007FFF] via-[#0055B3] to-[#0F2844] text-white p-6 rounded-3xl shadow-xl border-b-4 border-[#FCD116] relative overflow-hidden">
                 <div class="max-w-xl space-y-3 z-10 relative">
@@ -120,7 +123,7 @@
             <div id="grille-produits" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
         </section>
 
-        <!-- 2. PAGE PUBLIER (RÉSERVÉE AUX VENDEURS) -->
+        <!-- 2. PAGE PUBLIER -->
         <section id="page-publier" class="section-page hidden max-w-lg mx-auto bg-white p-6 rounded-2xl shadow-lg border border-slate-200 space-y-4">
             <h2 class="text-lg font-bold text-[#0F2844] flex items-center gap-2 border-b pb-3">
                 <i class="fa-solid fa-box-archive text-[#007FFF]"></i> Gestion Stock & Publication Vendeur
@@ -196,13 +199,13 @@
             </div>
         </section>
 
-        <!-- 4. PAGE REVENUS (RÉSERVÉE STRICTEMENT AUX VENDEURS) -->
+        <!-- 4. PAGE REVENUS (RÉSERVÉE VENDEURS) -->
         <section id="page-revenus" class="section-page hidden space-y-4">
             <h2 class="text-lg font-bold text-[#0F2844] flex items-center gap-2">
                 <i class="fa-solid fa-chart-line text-[#007FFF]"></i> Bilan & Suivi des Ventes (Espace Vendeur)
             </h2>
             <div id="avertissement-client" class="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-2xl text-xs hidden">
-                <i class="fa-solid fa-triangle-exclamation"></i> Accès restreint : Cet espace de bilan et de gestion du stock est strictement réservé aux vendeurs enregistrés.
+                <i class="fa-solid fa-triangle-exclamation"></i> Accès restreint : Cet espace est strictement réservé aux vendeurs.
             </div>
             <div id="contenu-revenus-vendeur" class="space-y-4">
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -222,7 +225,7 @@
                 <div class="bg-white p-5 rounded-2xl shadow border border-slate-200 space-y-3">
                     <h3 class="font-bold text-sm text-slate-800">Historique des commandes validées</h3>
                     <div id="liste-historique" class="text-xs text-slate-500 space-y-2">
-                        <p class="py-4 text-center">Aucune vente enregistrée pour le moment.</p>
+                        <p class="py-4 text-center">Aucune vente enregistrée.</p>
                     </div>
                 </div>
             </div>
@@ -270,6 +273,50 @@
             </div>
         </section>
 
+        <!-- 6. NOUVELLE PAGE: ESPACE ADMINISTRATEUR (PROPRIÉTAIRE) -->
+        <section id="page-admin" class="section-page hidden space-y-4">
+            <div class="bg-[#0F2844] text-white p-5 rounded-2xl shadow-lg border-l-4 border-amber-400 flex justify-between items-center">
+                <div>
+                    <h2 class="text-lg font-bold text-amber-400 flex items-center gap-2">
+                        <i class="fa-solid fa-shield-halved"></i> Espace Administrateur / Propriétaire
+                    </h2>
+                    <p class="text-xs text-slate-300">Panneau de contrôle et de modération sécurisé.</p>
+                </div>
+                <button onclick="seDeconnecterAdmin()" class="bg-red-600/80 hover:bg-red-600 text-white text-xs px-3 py-1.5 rounded-lg font-semibold">
+                    <i class="fa-solid fa-right-from-bracket"></i> Quitter
+                </button>
+            </div>
+
+            <!-- Signalements reçus -->
+            <div class="bg-white p-4 rounded-2xl shadow border border-slate-200 space-y-3">
+                <h3 class="font-bold text-sm text-[#0F2844] flex items-center justify-between">
+                    <span><i class="fa-solid fa-flag text-red-500"></i> Signalements de la communauté</span>
+                    <span id="badge-signalements" class="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded-full font-bold">0 alerte</span>
+                </h3>
+                <div id="liste-signalements-admin" class="text-xs space-y-2 divide-y">
+                    <p class="text-slate-400 text-center py-3">Aucun produit ou utilisateur signalé.</p>
+                </div>
+            </div>
+
+            <!-- Modération des annonces du marché -->
+            <div class="bg-white p-4 rounded-2xl shadow border border-slate-200 space-y-3">
+                <h3 class="font-bold text-sm text-[#0F2844]"><i class="fa-solid fa-list-check text-[#007FFF]"></i> Modération des articles en ligne</h3>
+                <div id="liste-produits-admin" class="text-xs space-y-3"></div>
+            </div>
+
+            <!-- Liste des numéros banni (Blacklist) -->
+            <div class="bg-white p-4 rounded-2xl shadow border border-slate-200 space-y-3">
+                <h3 class="font-bold text-sm text-red-700"><i class="fa-solid fa-ban"></i> Liste Noire (Numéros bloqués)</h3>
+                <div class="flex gap-2">
+                    <input type="tel" id="input-bloquer-num" placeholder="ex: 0810000000" class="flex-1 border rounded-xl p-2 text-xs focus:outline-none">
+                    <button onclick="bloquerNumeroDirect()" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-2 rounded-xl">
+                        Bloquer
+                    </button>
+                </div>
+                <div id="liste-blacklist" class="text-xs text-slate-500 space-y-1 pt-2"></div>
+            </div>
+        </section>
+
     </main>
 
     <!-- BARRE DE NAVIGATION INFÉRIEURE -->
@@ -289,18 +336,23 @@
             </button>
         </div>
     </nav>
-    <!-- SCRIPT JAVASCRIPT GESTION CLIENT / VENDEUR & PRODUITS KINSHASA -->
+    <!-- SCRIPT JAVASCRIPT GESTION CLIENT / VENDEUR & ADMIN MODÉRATION -->
     <script>
         const TAUX_CDF = 2800;
         let deviseActuelle = 'USD';
         let utilisateurActuel = null;
+        let adminConnecte = false;
 
-        // Produits de base typiques de Kinshasa avec images réelles d'illustration
+        // Numéros bloqués par le propriétaire (Blacklist)
+        let listeNoireNumeros = [];
+        let signalements = [];
+
+        // Produits de base
         let produits = [
-            { id: 1, nom: "Pondu Frais (Feuilles de manioc pilées)", prixUSD: 2.50, stock: 40, categorie: "Alimentation", image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400", tel: "+243847135909", vendeurNom: "Maman Nsimba", desc: "Pondu frais du jour, bien tendre du marché." },
-            { id: 2, nom: "Matembele (Feuilles de patates douces)", prixUSD: 2.00, stock: 30, categorie: "Alimentation", image: "https://images.unsplash.com/photo-1594282488362-7994cd6324d5?w=400", tel: "+243824248520", vendeurNom: "Papa Kanku", desc: "Matembele frais riches en vitamines." },
-            { id: 3, nom: "Maïs en Poudre (Fufu / Semoule)", prixUSD: 35.00, stock: 15, categorie: "Alimentation", image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400", tel: "+243847135909", vendeurNom: "Marché Central Kin", desc: "Sac de maïs blanc de qualité supérieure." },
-            { id: 4, nom: "Charbon de Bois (Sac)", prixUSD: 12.00, stock: 50, categorie: "Autre", image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400", tel: "+243824248520", vendeurNom: "Dépôt Energie RDC", desc: "Sac de charbon dur et sec." }
+            { id: 1, nom: "Pondu Frais (Feuilles de manioc pilées)", prixUSD: 2.50, stock: 40, categorie: "Alimentation", image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400", tel: "0847135909", vendeurNom: "Maman Nsimba", desc: "Pondu frais du jour, bien tendre du marché." },
+            { id: 2, nom: "Matembele (Feuilles de patates douces)", prixUSD: 2.00, stock: 30, categorie: "Alimentation", image: "https://images.unsplash.com/photo-1594282488362-7994cd6324d5?w=400", tel: "0824248520", vendeurNom: "Papa Kanku", desc: "Matembele frais riches en vitamines." },
+            { id: 3, nom: "Maïs en Poudre (Fufu / Semoule)", prixUSD: 35.00, stock: 15, categorie: "Alimentation", image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400", tel: "0847135909", vendeurNom: "Marché Central Kin", desc: "Sac de maïs blanc de qualité supérieure." },
+            { id: 4, nom: "Charbon de Bois (Sac)", prixUSD: 12.00, stock: 50, categorie: "Autre", image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400", tel: "0824248520", vendeurNom: "Dépôt Energie RDC", desc: "Sac de charbon dur et sec." }
         ];
 
         let panier = [];
@@ -315,13 +367,107 @@
             document.getElementById('modal-auth').classList.add('hidden');
         }
 
-        // CONTRÔLE D'ACCÈS STRICT POUR LA PUBLICATION
+        // ESPACE ADMINISTRATEUR SÉCURISÉ
+        function ouvrirConnexionAdmin() {
+            if(adminConnecte) {
+                afficherPageAdmin();
+                return;
+            }
+            const code = prompt("🔑 Entrez le mot de passe d'administration Wenzephone :");
+            if(code === "1234") { // Mot de passe Administrateur par défaut
+                adminConnecte = true;
+                alert("✅ Authentification Administrateur réussie.");
+                afficherPageAdmin();
+            } else if(code !== null) {
+                alert("❌ Mot de passe administrateur incorrect.");
+            }
+        }
+
+        function seDeconnecterAdmin() {
+            adminConnecte = false;
+            alert("Déconnexion de l'espace Administrateur.");
+            naviguerVers('accueil');
+        }
+
+        function afficherPageAdmin() {
+            naviguerVers('admin');
+            rafraichirAdmin();
+        }
+
+        function rafraichirAdmin() {
+            // Afficher produits à modérer
+            const containerProduits = document.getElementById('liste-produits-admin');
+            let htmlProd = '';
+            produits.forEach(p => {
+                htmlProd += `
+                    <div class="p-3 border rounded-xl flex justify-between items-center bg-slate-50">
+                        <div>
+                            <strong>${p.nom}</strong> (${p.vendeurNom} - ${p.tel})
+                            <p class="text-[11px] text-slate-500">${formaterPrix(p.prixUSD)} | Stock: ${p.stock}</p>
+                        </div>
+                        <button onclick="supprimerProduitAdmin(${p.id})" class="bg-red-600 hover:bg-red-700 text-white font-bold text-[10px] px-2.5 py-1 rounded-lg">
+                            <i class="fa-solid fa-trash"></i> Supprimer
+                        </button>
+                    </div>
+                `;
+            });
+            containerProduits.innerHTML = htmlProd || '<p class="text-slate-400">Aucun produit.</p>';
+
+            // Afficher la blacklist
+            const containerBlacklist = document.getElementById('liste-blacklist');
+            if(listeNoireNumeros.length === 0) {
+                containerBlacklist.innerHTML = '<p class="text-slate-400">Aucun numéro bloqué.</p>';
+            } else {
+                containerBlacklist.innerHTML = listeNoireNumeros.map(n => `<span class="inline-block bg-red-100 text-red-800 px-2 py-0.5 rounded-full font-bold mr-1">${n}</span>`).join('');
+            }
+
+            // Signalements
+            document.getElementById('badge-signalements').textContent = signalements.length + " alerte(s)";
+            const containerSig = document.getElementById('liste-signalements-admin');
+            if(signalements.length === 0) {
+                containerSig.innerHTML = '<p class="text-slate-400 text-center py-2">Aucun signalement reçu.</p>';
+            } else {
+                containerSig.innerHTML = signalements.map(s => `<div class="py-2 text-red-600">⚠️ Produit: <strong>${s.produit}</strong> | Raison: ${s.raison}</div>`).join('');
+            }
+        }
+
+        function supprimerProduitAdmin(id) {
+            if(confirm("Voulez-vous vraiment supprimer cet article de la plateforme ?")) {
+                produits = produits.filter(p => p.id !== id);
+                afficherProduits();
+                rafraichirAdmin();
+                alert("Article supprimé de la vitrine.");
+            }
+        }
+
+        function bloquerNumeroDirect() {
+            const input = document.getElementById('input-bloquer-num');
+            const num = input.value.trim();
+            if(num) {
+                listeNoireNumeros.push(num);
+                input.value = '';
+                rafraichirAdmin();
+                alert("Le numéro " + num + " a été ajouté à la liste noire.");
+            }
+        }
+
+        function signalerProduit(id) {
+            const p = produits.find(prod => prod.id === id);
+            if(p) {
+                const raison = prompt("Pourquoi signalez-vous cet article (ex: contenu inapproprié, arnaque) ?");
+                if(raison) {
+                    signalements.push({ produit: p.nom, raison: raison, id: Date.now() });
+                    alert("Merci. Votre signalement a été transmis à l'administrateur de Wenzephone.");
+                }
+            }
+        }
+
         function controlerAccesPublier() {
             if(!utilisateurActuel) {
-                alert("🔒 Accès restreint !\nVeuillez d'abord vous connecter en tant que Vendeur pour publier des articles.");
+                alert("🔒 Accès restreint !\nVeuillez d'abord vous connecter en tant que Vendeur.");
                 ouvrirAuth();
             } else if(utilisateurActuel.role !== 'Vendeur') {
-                alert("❌ Vous êtes connecté en tant que Client.\nSeuls les Vendeurs peuvent publier et gérer le stock.");
+                alert("❌ Seuls les Vendeurs peuvent publier et gérer le stock.");
                 naviguerVers('accueil');
             } else {
                 document.getElementById('pub-tel').value = utilisateurActuel.tel;
@@ -355,6 +501,12 @@
                 return;
             }
 
+            // Vérifier si le numéro est banni
+            if(listeNoireNumeros.includes(tel)) {
+                alert("⛔ Ce numéro a été bloqué par l'administration pour non-respect des règles.");
+                return;
+            }
+
             utilisateurActuel = { nom, tel, role };
             fermerAuth();
 
@@ -367,7 +519,6 @@
                 lbl.classList.remove('hidden');
             }
 
-            // GESTION DE L'AFFICHAGE SELON LE RÔLE CLIENT / VENDEUR
             const avertissementClient = document.getElementById('avertissement-client');
             const contenuVendeur = document.getElementById('contenu-revenus-vendeur');
 
@@ -418,7 +569,6 @@
             mettreAJourRevenus();
         }
 
-        // AFFICHAGE DES PRODUITS AVEC GESTION DU STOCK
         function afficherProduits() {
             const grille = document.getElementById('grille-produits');
             document.getElementById('compteur-articles').textContent = produits.length + " article(s) disponible(s)";
@@ -444,6 +594,9 @@
                             <div class="h-36 bg-slate-100 rounded-xl flex items-center justify-center overflow-hidden mb-3 relative">
                                 ${imgTag}
                                 <div class="absolute top-2 right-2">${badgeStock}</div>
+                                <button onclick="signalerProduit(${p.id})" class="absolute top-2 left-2 bg-white/80 hover:bg-white text-red-600 w-6 h-6 rounded-full flex items-center justify-center text-[10px] shadow" title="Signaler du contenu inapproprié">
+                                    <i class="fa-solid fa-flag"></i>
+                                </button>
                             </div>
                             <span class="text-[10px] bg-[#007FFF]/10 text-[#007FFF] px-2 py-0.5 rounded-full font-bold">${p.categorie}</span>
                             <h4 class="font-bold text-[#0F2844] text-sm mt-1">${p.nom}</h4>
@@ -468,7 +621,6 @@
             grille.innerHTML = html;
         }
 
-        // PUBLICATION PAR LE VENDEUR
         function exposerArticle(event) {
             event.preventDefault();
             const nom = document.getElementById('pub-nom').value;
@@ -480,6 +632,11 @@
 
             if (!validerNumeroRDC(tel)) {
                 alert("❌ Numéro invalide !");
+                return;
+            }
+
+            if(listeNoireNumeros.includes(tel)) {
+                alert("⛔ Votre numéro est bloqué sur Wenzephone.");
                 return;
             }
 
@@ -529,7 +686,6 @@
             container.innerHTML = html;
         }
 
-        // PANIER ET RÉDUCTION AUTOMATIQUE DU STOCK À LA COMMANDE
         function ajouterAuPanier(id) {
             const p = produits.find(prod => prod.id === id);
             if(p && p.stock > 0) {
@@ -587,7 +743,6 @@
             afficherPanier();
         }
 
-        // VALIDATION DE COMMANDE & RÉDUCTION DU STOCK
         function validerPaiementMobile() {
             if(panier.length === 0) return;
             const modePaiement = document.querySelector('input[name="paiement"]:checked').value;
@@ -598,7 +753,6 @@
                 return;
             }
 
-            // Réduire automatiquement la quantité en stock pour chaque article acheté
             panier.forEach(item => {
                 let prod = produits.find(p => p.id === item.id);
                 if(prod && prod.stock > 0) {
@@ -610,7 +764,7 @@
             ventesTotalesUSD += totalUSD;
             nombreCommandes += 1;
 
-            alert(`✅ Commande validée et payée avec succès via ${modePaiement} (${telPaiement}) !\nLe stock a été mis à jour.`);
+            alert(`✅ Commande validée et payée avec succès via ${modePaiement} (${telPaiement}) !`);
             
             panier = [];
             mettreAJourBadge();
