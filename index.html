@@ -8,6 +8,40 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icônes -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- INTEGRATION FIREBASE SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Vos identifiants de projet Firebase Wenzephone
+        const firebaseConfig = {
+            apiKey: "AIzaSyCC0-H5pT-vQ...", // Ta clé API Firebase
+            authDomain: "wenzephone.firebaseapp.com",
+            projectId: "wenzephone",
+            storageBucket: "wenzephone.firebasestorage.app",
+            messagingSenderId: "72697167422",
+            appId: "1:72697167422:web:wenzephone",
+            measurementId: "G-QJSRL65..."
+        };
+
+        // Initialisation de Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Exposer les méthodes Firebase globalement
+        window.db = db;
+        window.collection = collection;
+        window.addDoc = addDoc;
+        window.getDocs = getDocs;
+        window.doc = doc;
+        window.deleteDoc = deleteDoc;
+
+        // Charger les données dès l'ouverture de la page
+        window.addEventListener('DOMContentLoaded', () => {
+            chargerProduitsFirebase();
+        });
+    </script>
 </head>
 <body class="bg-[#F0F6FC] font-sans min-h-screen flex flex-col text-[#0F2844]">
 
@@ -74,12 +108,9 @@
     <header class="bg-[#0F2844] text-white shadow-md sticky top-0 z-40 border-b-4 border-[#CE1126]">
         <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
             <h1 onclick="naviguerVers('accueil')" class="text-xl font-extrabold flex items-center gap-2 cursor-pointer text-[#007FFF]">
-                <i class="fa-solid fa-store text-[#FCD116]"></i> Wenzephone
+                <i class="fa-solid fa-store text-[#FCD116]"></i> Wenzephone <span class="text-[10px] bg-emerald-600 px-2 py-0.5 rounded text-white font-normal ml-1">Cloud</span>
             </h1>
             <div class="flex items-center gap-3">
-                <button onclick="ouvrirConnexionAdmin()" class="text-xs text-amber-300 bg-amber-950/40 hover:bg-amber-900/60 px-2.5 py-1 rounded-lg font-semibold transition border border-amber-500/40 flex items-center gap-1">
-                    <i class="fa-solid fa-user-shield"></i> Admin
-                </button>
                 <button onclick="naviguerVers('panier')" class="relative p-2 text-slate-200 hover:text-[#007FFF] transition">
                     <i class="fa-solid fa-cart-shopping text-xl"></i>
                     <span id="badge-panier" class="absolute -top-1 -right-1 bg-[#CE1126] text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold hidden">0</span>
@@ -91,18 +122,18 @@
     <!-- CONTENU PRINCIPAL -->
     <main class="max-w-4xl mx-auto w-full flex-1 p-4 pb-28">
 
-        <!-- 1. PAGE ACCUEIL (VITRINE) -->
+        <!-- 1. PAGE ACCUEIL -->
         <section id="page-accueil" class="section-page space-y-6">
             <div class="bg-gradient-to-r from-[#007FFF] via-[#0055B3] to-[#0F2844] text-white p-6 rounded-3xl shadow-xl border-b-4 border-[#FCD116] relative overflow-hidden">
                 <div class="max-w-xl space-y-3 z-10 relative">
                     <span class="bg-[#FCD116] text-[#0F2844] text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                        <i class="fa-solid fa-basket-shopping"></i> Produits Locaux & Vivriers Kinshasa
+                        <i class="fa-solid fa-basket-shopping"></i> Produits Locaux Kinshasa
                     </span>
                     <h2 class="text-xl sm:text-2xl font-black leading-tight text-white">
-                        Le Grand Marché Numérique de la RDC à portée de main !
+                        Le Grand Marché Numérique de la RDC connecté sur Firebase Cloud !
                     </h2>
                     <p class="text-xs text-slate-200 leading-relaxed">
-                        Retrouvez le pondu frais, les matembele, le maïs, le charbon et l'électronique directement auprès des vendeurs de confiance. Paiement sécurisé (M-Pesa, Orange, Airtel).
+                        Retrouvez le pondu frais, les matembele, le maïs, le charbon et l'électronique sauvegardés en temps réel.
                     </p>
                     <div class="pt-2 flex flex-wrap gap-3">
                         <button onclick="ouvrirAuth()" class="bg-[#FCD116] hover:bg-[#e5bc00] text-[#0F2844] font-extrabold text-xs py-2.5 px-4 rounded-xl shadow-lg transition flex items-center gap-2">
@@ -117,7 +148,7 @@
 
             <div class="flex justify-between items-center">
                 <h3 class="font-bold text-[#0F2844] text-base">Aliments & Articles Disponibles au Marché</h3>
-                <span class="text-xs text-slate-500 font-medium" id="compteur-articles">0 article disponible</span>
+                <span class="text-xs text-slate-500 font-medium" id="compteur-articles">Chargement des données...</span>
             </div>
 
             <div id="grille-produits" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
@@ -126,12 +157,12 @@
         <!-- 2. PAGE PUBLIER -->
         <section id="page-publier" class="section-page hidden max-w-lg mx-auto bg-white p-6 rounded-2xl shadow-lg border border-slate-200 space-y-4">
             <h2 class="text-lg font-bold text-[#0F2844] flex items-center gap-2 border-b pb-3">
-                <i class="fa-solid fa-box-archive text-[#007FFF]"></i> Gestion Stock & Publication Vendeur
+                <i class="fa-solid fa-box-archive text-[#007FFF]"></i> Publication Vendeur (Sauvegarde Firebase)
             </h2>
-            <form id="form-publier" onsubmit="exposerArticle(event)" class="space-y-4 text-sm">
+            <form id="form-publier" onsubmit="exposerArticleFirebase(event)" class="space-y-4 text-sm">
                 <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Nom du produit (ex: Pondu frais, Maïs, etc.)</label>
-                    <input type="text" id="pub-nom" required placeholder="ex: Paquet de Pondu Frais (Feuilles de manioc)" class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none">
+                    <label class="block font-semibold text-slate-700 mb-1">Nom du produit (ex: Pondu frais)</label>
+                    <input type="text" id="pub-nom" required placeholder="ex: Paquet de Pondu Frais" class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
@@ -144,19 +175,19 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Lien de l'image réelle (Optionnel)</label>
-                    <input type="url" id="pub-image" placeholder="Lien URL de la photo" class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none">
+                    <label class="block font-semibold text-slate-700 mb-1">Lien de l'image (Optionnel)</label>
+                    <input type="url" id="pub-image" placeholder="https://..." class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none">
                 </div>
                 <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Votre Numéro de Contact (WhatsApp / Appel)</label>
+                    <label class="block font-semibold text-slate-700 mb-1">Votre Numéro de Contact</label>
                     <input type="tel" id="pub-tel" required placeholder="ex: 0847135909" class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none">
                 </div>
                 <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Description / Disponibilité</label>
-                    <textarea id="pub-desc" rows="2" placeholder="Ex: Frais du jour récolté au marché central..." class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none"></textarea>
+                    <label class="block font-semibold text-slate-700 mb-1">Description</label>
+                    <textarea id="pub-desc" rows="2" placeholder="Frais du jour récolté au marché..." class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none"></textarea>
                 </div>
                 <button type="submit" class="w-full bg-[#007FFF] hover:bg-[#0065CC] text-white font-bold py-3 rounded-xl shadow transition">
-                    Mettre en ligne sur le marché
+                    Mettre en ligne sur le Cloud
                 </button>
             </form>
         </section>
@@ -167,45 +198,13 @@
             <div id="liste-contacts" class="bg-white rounded-2xl shadow border border-slate-200 divide-y"></div>
         </section>
 
-        <!-- 3.1 CHAT INDIVIDUEL -->
-        <section id="page-chat" class="section-page hidden bg-white rounded-2xl shadow-lg border border-slate-200 flex flex-col h-[500px]">
-            <div class="p-4 bg-[#007FFF] text-white rounded-t-2xl flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <button onclick="naviguerVers('messagerie')" class="text-white hover:text-slate-200"><i class="fa-solid fa-arrow-left"></i></button>
-                    <div>
-                        <h3 id="chat-nom" class="font-bold text-sm">Vendeur</h3>
-                        <p id="chat-num-label" class="text-[10px] text-[#FCD116]">Numéro authentique</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3">
-                    <a id="link-appel" href="#" class="bg-white text-[#007FFF] w-8 h-8 rounded-full flex items-center justify-center text-xs shadow font-bold" title="Appeler">
-                        <i class="fa-solid fa-phone"></i>
-                    </a>
-                    <a id="link-whatsapp" href="#" target="_blank" class="bg-green-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-xs shadow" title="WhatsApp">
-                        <i class="fa-brands fa-whatsapp"></i>
-                    </a>
-                </div>
-            </div>
-            <div id="box-discussion" class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50 text-sm">
-                <div class="bg-white border p-3 rounded-2xl rounded-tl-none max-w-[80%] shadow-sm">
-                    Bonjour ! Je souhaite commander vos produits sur Wenzephone.
-                </div>
-            </div>
-            <div class="p-3 border-t bg-white flex gap-2 rounded-b-2xl">
-                <input type="text" id="input-chat" placeholder="Écrivez votre message..." class="flex-1 border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#007FFF]">
-                <button onclick="envoyerMessageChat()" class="bg-[#007FFF] text-white px-4 rounded-xl text-sm font-semibold hover:bg-[#0065CC]">
-                    <i class="fa-solid fa-paper-plane"></i>
-                </button>
-            </div>
-        </section>
-
-        <!-- 4. PAGE REVENUS (RÉSERVÉE VENDEURS) -->
+        <!-- 4. PAGE REVENUS -->
         <section id="page-revenus" class="section-page hidden space-y-4">
             <h2 class="text-lg font-bold text-[#0F2844] flex items-center gap-2">
-                <i class="fa-solid fa-chart-line text-[#007FFF]"></i> Bilan & Suivi des Ventes (Espace Vendeur)
+                <i class="fa-solid fa-chart-line text-[#007FFF]"></i> Bilan & Suivi des Ventes
             </h2>
             <div id="avertissement-client" class="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-2xl text-xs hidden">
-                <i class="fa-solid fa-triangle-exclamation"></i> Accès restreint : Cet espace est strictement réservé aux vendeurs.
+                <i class="fa-solid fa-triangle-exclamation"></i> Accès restreint : Reservé aux vendeurs.
             </div>
             <div id="contenu-revenus-vendeur" class="space-y-4">
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -217,106 +216,17 @@
                         <p class="text-xs text-slate-500">Commandes Reçues</p>
                         <p id="stat-commandes" class="text-xl font-bold text-[#007FFF] mt-1">0</p>
                     </div>
-                    <div class="bg-white p-4 rounded-2xl shadow border border-slate-200 col-span-2 sm:col-span-1">
-                        <p class="text-xs text-slate-500">Revenu Net (90%)</p>
-                        <p id="stat-revenunet" class="text-xl font-bold text-emerald-600 mt-1">$ 0.00</p>
-                    </div>
-                </div>
-                <div class="bg-white p-5 rounded-2xl shadow border border-slate-200 space-y-3">
-                    <h3 class="font-bold text-sm text-slate-800">Historique des commandes validées</h3>
-                    <div id="liste-historique" class="text-xs text-slate-500 space-y-2">
-                        <p class="py-4 text-center">Aucune vente enregistrée.</p>
-                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- 5. PAGE PANIER (CLIENTS) -->
+        <!-- 5. PAGE PANIER -->
         <section id="page-panier" class="section-page hidden space-y-4">
             <h2 class="text-lg font-bold text-[#0F2844]">Mon Panier & Paiement Mobile</h2>
             <div id="contenu-panier" class="bg-white p-4 rounded-2xl shadow border border-slate-200 space-y-3">
                 <p class="text-sm text-slate-500 text-center py-6">Votre panier est vide.</p>
             </div>
-            
-            <div id="bloc-total" class="bg-white p-5 rounded-2xl shadow border border-slate-200 space-y-4 hidden">
-                <div class="flex justify-between items-center font-bold text-base border-b pb-3">
-                    <span>Total à payer :</span>
-                    <span id="texte-total-panier" class="text-[#007FFF] text-lg">$ 0.00</span>
-                </div>
-
-                <div class="space-y-3">
-                    <label class="block font-bold text-sm text-slate-800">Mode de paiement mobile RDC :</label>
-                    <div class="grid grid-cols-3 gap-2">
-                        <label class="border-2 border-slate-200 rounded-xl p-3 flex flex-col items-center justify-center cursor-pointer hover:border-red-600 transition bg-red-50/30">
-                            <input type="radio" name="paiement" value="Airtel Money" checked class="mb-1 accent-red-600">
-                            <span class="font-bold text-xs text-red-600">Airtel Money</span>
-                        </label>
-                        <label class="border-2 border-slate-200 rounded-xl p-3 flex flex-col items-center justify-center cursor-pointer hover:border-orange-500 transition bg-orange-50/30">
-                            <input type="radio" name="paiement" value="Orange Money" class="mb-1 accent-orange-500">
-                            <span class="font-bold text-xs text-orange-500">Orange Money</span>
-                        </label>
-                        <label class="border-2 border-slate-200 rounded-xl p-3 flex flex-col items-center justify-center cursor-pointer hover:border-red-500 transition bg-red-50/20">
-                            <input type="radio" name="paiement" value="M-Pesa" class="mb-1 accent-red-500">
-                            <span class="font-bold text-xs text-red-700">M-Pesa</span>
-                        </label>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Votre numéro de téléphone (pour le débit) :</label>
-                        <input type="tel" id="tel-paiement" placeholder="ex: 0847135909" class="w-full border rounded-xl p-2.5 text-sm focus:border-[#007FFF] focus:outline-none">
-                    </div>
-                </div>
-
-                <button onclick="validerPaiementMobile()" class="w-full bg-[#007FFF] hover:bg-[#0065CC] text-white font-bold py-3.5 rounded-xl shadow-lg transition text-sm flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-lock"></i> Valider la commande et Payer
-                </button>
-            </div>
         </section>
-
-        <!-- 6. NOUVELLE PAGE: ESPACE ADMINISTRATEUR (PROPRIÉTAIRE) -->
-        <section id="page-admin" class="section-page hidden space-y-4">
-            <div class="bg-[#0F2844] text-white p-5 rounded-2xl shadow-lg border-l-4 border-amber-400 flex justify-between items-center">
-                <div>
-                    <h2 class="text-lg font-bold text-amber-400 flex items-center gap-2">
-                        <i class="fa-solid fa-shield-halved"></i> Espace Administrateur / Propriétaire
-                    </h2>
-                    <p class="text-xs text-slate-300">Panneau de contrôle et de modération sécurisé.</p>
-                </div>
-                <button onclick="seDeconnecterAdmin()" class="bg-red-600/80 hover:bg-red-600 text-white text-xs px-3 py-1.5 rounded-lg font-semibold">
-                    <i class="fa-solid fa-right-from-bracket"></i> Quitter
-                </button>
-            </div>
-
-            <!-- Signalements reçus -->
-            <div class="bg-white p-4 rounded-2xl shadow border border-slate-200 space-y-3">
-                <h3 class="font-bold text-sm text-[#0F2844] flex items-center justify-between">
-                    <span><i class="fa-solid fa-flag text-red-500"></i> Signalements de la communauté</span>
-                    <span id="badge-signalements" class="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded-full font-bold">0 alerte</span>
-                </h3>
-                <div id="liste-signalements-admin" class="text-xs space-y-2 divide-y">
-                    <p class="text-slate-400 text-center py-3">Aucun produit ou utilisateur signalé.</p>
-                </div>
-            </div>
-
-            <!-- Modération des annonces du marché -->
-            <div class="bg-white p-4 rounded-2xl shadow border border-slate-200 space-y-3">
-                <h3 class="font-bold text-sm text-[#0F2844]"><i class="fa-solid fa-list-check text-[#007FFF]"></i> Modération des articles en ligne</h3>
-                <div id="liste-produits-admin" class="text-xs space-y-3"></div>
-            </div>
-
-            <!-- Liste des numéros banni (Blacklist) -->
-            <div class="bg-white p-4 rounded-2xl shadow border border-slate-200 space-y-3">
-                <h3 class="font-bold text-sm text-red-700"><i class="fa-solid fa-ban"></i> Liste Noire (Numéros bloqués)</h3>
-                <div class="flex gap-2">
-                    <input type="tel" id="input-bloquer-num" placeholder="ex: 0810000000" class="flex-1 border rounded-xl p-2 text-xs focus:outline-none">
-                    <button onclick="bloquerNumeroDirect()" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-2 rounded-xl">
-                        Bloquer
-                    </button>
-                </div>
-                <div id="liste-blacklist" class="text-xs text-slate-500 space-y-1 pt-2"></div>
-            </div>
-        </section>
-
     </main>
 
     <!-- BARRE DE NAVIGATION INFÉRIEURE -->
@@ -332,163 +242,20 @@
                 <i class="fa-solid fa-comments text-lg"></i> Messagerie
             </button>
             <button onclick="naviguerVers('revenus')" id="nav-revenus" class="flex flex-col items-center text-slate-400 text-[11px] font-semibold">
-                <i class="fa-solid fa-chart-line text-lg"></i> Bilan Stock
+                <i class="fa-solid fa-chart-line text-lg"></i> Bilan
             </button>
         </div>
     </nav>
-    <!-- SCRIPT JAVASCRIPT GESTION CLIENT / VENDEUR & ADMIN MODÉRATION -->
+
+    <!-- SCRIPT APPLICATION -->
     <script>
         const TAUX_CDF = 2800;
         let deviseActuelle = 'USD';
         let utilisateurActuel = null;
-        let adminConnecte = false;
+        let produits = [];
 
-        // Numéros bloqués par le propriétaire (Blacklist)
-        let listeNoireNumeros = [];
-        let signalements = [];
-
-        // Produits de base
-        let produits = [
-            { id: 1, nom: "Pondu Frais (Feuilles de manioc pilées)", prixUSD: 2.50, stock: 40, categorie: "Alimentation", image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400", tel: "0847135909", vendeurNom: "Maman Nsimba", desc: "Pondu frais du jour, bien tendre du marché." },
-            { id: 2, nom: "Matembele (Feuilles de patates douces)", prixUSD: 2.00, stock: 30, categorie: "Alimentation", image: "https://images.unsplash.com/photo-1594282488362-7994cd6324d5?w=400", tel: "0824248520", vendeurNom: "Papa Kanku", desc: "Matembele frais riches en vitamines." },
-            { id: 3, nom: "Maïs en Poudre (Fufu / Semoule)", prixUSD: 35.00, stock: 15, categorie: "Alimentation", image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400", tel: "0847135909", vendeurNom: "Marché Central Kin", desc: "Sac de maïs blanc de qualité supérieure." },
-            { id: 4, nom: "Charbon de Bois (Sac)", prixUSD: 12.00, stock: 50, categorie: "Autre", image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400", tel: "0824248520", vendeurNom: "Dépôt Energie RDC", desc: "Sac de charbon dur et sec." }
-        ];
-
-        let panier = [];
-        let ventesTotalesUSD = 0;
-        let nombreCommandes = 0;
-
-        function ouvrirAuth() {
-            document.getElementById('modal-auth').classList.remove('hidden');
-        }
-
-        function fermerAuth() {
-            document.getElementById('modal-auth').classList.add('hidden');
-        }
-
-        // ESPACE ADMINISTRATEUR SÉCURISÉ
-        function ouvrirConnexionAdmin() {
-            if(adminConnecte) {
-                afficherPageAdmin();
-                return;
-            }
-            const code = prompt("🔑 Entrez le mot de passe d'administration Wenzephone :");
-            if(code === "1234") { // Mot de passe Administrateur par défaut
-                adminConnecte = true;
-                alert("✅ Authentification Administrateur réussie.");
-                afficherPageAdmin();
-            } else if(code !== null) {
-                alert("❌ Mot de passe administrateur incorrect.");
-            }
-        }
-
-        function seDeconnecterAdmin() {
-            adminConnecte = false;
-            alert("Déconnexion de l'espace Administrateur.");
-            naviguerVers('accueil');
-        }
-
-        function afficherPageAdmin() {
-            naviguerVers('admin');
-            rafraichirAdmin();
-        }
-
-        function rafraichirAdmin() {
-            // Afficher produits à modérer
-            const containerProduits = document.getElementById('liste-produits-admin');
-            let htmlProd = '';
-            produits.forEach(p => {
-                htmlProd += `
-                    <div class="p-3 border rounded-xl flex justify-between items-center bg-slate-50">
-                        <div>
-                            <strong>${p.nom}</strong> (${p.vendeurNom} - ${p.tel})
-                            <p class="text-[11px] text-slate-500">${formaterPrix(p.prixUSD)} | Stock: ${p.stock}</p>
-                        </div>
-                        <button onclick="supprimerProduitAdmin(${p.id})" class="bg-red-600 hover:bg-red-700 text-white font-bold text-[10px] px-2.5 py-1 rounded-lg">
-                            <i class="fa-solid fa-trash"></i> Supprimer
-                        </button>
-                    </div>
-                `;
-            });
-            containerProduits.innerHTML = htmlProd || '<p class="text-slate-400">Aucun produit.</p>';
-
-            // Afficher la blacklist
-            const containerBlacklist = document.getElementById('liste-blacklist');
-            if(listeNoireNumeros.length === 0) {
-                containerBlacklist.innerHTML = '<p class="text-slate-400">Aucun numéro bloqué.</p>';
-            } else {
-                containerBlacklist.innerHTML = listeNoireNumeros.map(n => `<span class="inline-block bg-red-100 text-red-800 px-2 py-0.5 rounded-full font-bold mr-1">${n}</span>`).join('');
-            }
-
-            // Signalements
-            document.getElementById('badge-signalements').textContent = signalements.length + " alerte(s)";
-            const containerSig = document.getElementById('liste-signalements-admin');
-            if(signalements.length === 0) {
-                containerSig.innerHTML = '<p class="text-slate-400 text-center py-2">Aucun signalement reçu.</p>';
-            } else {
-                containerSig.innerHTML = signalements.map(s => `<div class="py-2 text-red-600">⚠️ Produit: <strong>${s.produit}</strong> | Raison: ${s.raison}</div>`).join('');
-            }
-        }
-
-        function supprimerProduitAdmin(id) {
-            if(confirm("Voulez-vous vraiment supprimer cet article de la plateforme ?")) {
-                produits = produits.filter(p => p.id !== id);
-                afficherProduits();
-                rafraichirAdmin();
-                alert("Article supprimé de la vitrine.");
-            }
-        }
-
-        function bloquerNumeroDirect() {
-            const input = document.getElementById('input-bloquer-num');
-            const num = input.value.trim();
-            if(num) {
-                listeNoireNumeros.push(num);
-                input.value = '';
-                rafraichirAdmin();
-                alert("Le numéro " + num + " a été ajouté à la liste noire.");
-            }
-        }
-
-        function signalerProduit(id) {
-            const p = produits.find(prod => prod.id === id);
-            if(p) {
-                const raison = prompt("Pourquoi signalez-vous cet article (ex: contenu inapproprié, arnaque) ?");
-                if(raison) {
-                    signalements.push({ produit: p.nom, raison: raison, id: Date.now() });
-                    alert("Merci. Votre signalement a été transmis à l'administrateur de Wenzephone.");
-                }
-            }
-        }
-
-        function controlerAccesPublier() {
-            if(!utilisateurActuel) {
-                alert("🔒 Accès restreint !\nVeuillez d'abord vous connecter en tant que Vendeur.");
-                ouvrirAuth();
-            } else if(utilisateurActuel.role !== 'Vendeur') {
-                alert("❌ Seuls les Vendeurs peuvent publier et gérer le stock.");
-                naviguerVers('accueil');
-            } else {
-                document.getElementById('pub-tel').value = utilisateurActuel.tel;
-                naviguerVers('publier');
-            }
-        }
-
-        function nettoyerNumero(tel) {
-            let t = tel.replace(/\s+/g, '').replace(/-/g, '');
-            if(t.startsWith('0')) {
-                t = '243' + t.substring(1);
-            } else if(t.startsWith('+243')) {
-                t = t.substring(1);
-            }
-            return t;
-        }
-
-        function validerNumeroRDC(telephone) {
-            const telPropre = telephone.replace(/\s+/g, '').replace(/-/g, '');
-            return /^(?:\+243|243|0)[89][0-9]{8}$/.test(telPropre);
-        }
+        function ouvrirAuth() { document.getElementById('modal-auth').classList.remove('hidden'); }
+        function fermerAuth() { document.getElementById('modal-auth').classList.add('hidden'); }
 
         function connecterUtilisateur(event) {
             event.preventDefault();
@@ -496,43 +263,18 @@
             const tel = document.getElementById('auth-tel').value.trim();
             const role = document.getElementById('auth-role').value;
 
-            if (!validerNumeroRDC(tel)) {
-                alert("❌ Veuillez entrer un vrai numéro RDC valide (ex: 0847135909).");
-                return;
-            }
-
-            // Vérifier si le numéro est banni
-            if(listeNoireNumeros.includes(tel)) {
-                alert("⛔ Ce numéro a été bloqué par l'administration pour non-respect des règles.");
-                return;
-            }
-
             utilisateurActuel = { nom, tel, role };
             fermerAuth();
 
-            const btnAuth = document.getElementById('btn-ouvrir-auth');
+            document.getElementById('btn-ouvrir-auth').classList.add('hidden');
             const lbl = document.getElementById('label-profil-connecte');
+            lbl.textContent = `👤 ${nom} (${role})`;
+            lbl.classList.remove('hidden');
 
-            if(btnAuth) btnAuth.classList.add('hidden');
-            if(lbl) {
-                lbl.textContent = `👤 ${nom} (${role})`;
-                lbl.classList.remove('hidden');
-            }
-
-            const avertissementClient = document.getElementById('avertissement-client');
-            const contenuVendeur = document.getElementById('contenu-revenus-vendeur');
-
-            if(role === 'Client') {
-                avertissementClient.classList.remove('hidden');
-                contenuVendeur.classList.add('hidden');
-            } else {
-                avertissementClient.classList.add('hidden');
-                contenuVendeur.classList.remove('hidden');
+            if(role === 'Vendeur') {
                 document.getElementById('pub-tel').value = tel;
             }
-
-            alert(`✅ Bienvenue ${nom} !\nConnecté avec succès en tant que ${role}.`);
-            rafraichirContacts();
+            alert(`✅ Bienvenue ${nom} (${role}) !`);
         }
 
         function naviguerVers(pageId) {
@@ -547,7 +289,6 @@
                     btn.classList.add('text-slate-400');
                 }
             });
-
             const activeBtn = document.getElementById('nav-' + pageId);
             if(activeBtn) {
                 activeBtn.classList.remove('text-slate-400');
@@ -556,72 +297,31 @@
         }
 
         function formaterPrix(prixUSD) {
-            if (deviseActuelle === 'CDF') {
-                return (prixUSD * TAUX_CDF).toLocaleString('fr-FR') + ' FC';
-            }
+            if (deviseActuelle === 'CDF') return (prixUSD * TAUX_CDF).toLocaleString('fr-FR') + ' FC';
             return '$ ' + prixUSD.toFixed(2);
         }
 
         function changerDevise() {
             deviseActuelle = document.getElementById('select-devise').value;
             afficherProduits();
-            afficherPanier();
-            mettreAJourRevenus();
         }
 
-        function afficherProduits() {
-            const grille = document.getElementById('grille-produits');
-            document.getElementById('compteur-articles').textContent = produits.length + " article(s) disponible(s)";
-            
-            let html = '';
-            produits.forEach(p => {
-                const telClean = nettoyerNumero(p.tel);
-                const imgTag = p.image 
-                    ? `<img src="${p.image}" class="w-full h-full object-cover" alt="${p.nom}" onError="this.src='https://via.placeholder.com/300x200?text=Wenzephone'">`
-                    : `<i class="fa-solid fa-basket-shopping text-4xl text-slate-300"></i>`;
-
-                const badgeStock = p.stock > 0 
-                    ? `<span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded-full font-bold">Stock : ${p.stock} dispo</span>`
-                    : `<span class="bg-red-100 text-red-800 text-[10px] px-2 py-0.5 rounded-full font-bold">Rupture de stock</span>`;
-
-                const boutonAchat = p.stock > 0
-                    ? `<button onclick="ajouterAuPanier(${p.id})" class="w-full bg-[#0F2844] hover:bg-[#1a3a5f] text-white py-2 rounded-xl text-xs font-semibold shadow transition"><i class="fa-solid fa-cart-plus"></i> Ajouter au panier</button>`
-                    : `<button disabled class="w-full bg-slate-300 text-slate-500 py-2 rounded-xl text-xs font-bold cursor-not-allowed">Indisponible</button>`;
-
-                html += `
-                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex flex-col justify-between">
-                        <div>
-                            <div class="h-36 bg-slate-100 rounded-xl flex items-center justify-center overflow-hidden mb-3 relative">
-                                ${imgTag}
-                                <div class="absolute top-2 right-2">${badgeStock}</div>
-                                <button onclick="signalerProduit(${p.id})" class="absolute top-2 left-2 bg-white/80 hover:bg-white text-red-600 w-6 h-6 rounded-full flex items-center justify-center text-[10px] shadow" title="Signaler du contenu inapproprié">
-                                    <i class="fa-solid fa-flag"></i>
-                                </button>
-                            </div>
-                            <span class="text-[10px] bg-[#007FFF]/10 text-[#007FFF] px-2 py-0.5 rounded-full font-bold">${p.categorie}</span>
-                            <h4 class="font-bold text-[#0F2844] text-sm mt-1">${p.nom}</h4>
-                            <p class="text-xs text-slate-500 mt-1 line-clamp-2">${p.desc}</p>
-                            <p class="text-[10px] text-slate-400 mt-1"><i class="fa-solid fa-user"></i> Vendeur: <strong>${p.vendeurNom}</strong></p>
-                            <p class="text-[#007FFF] font-extrabold text-base mt-2">${formaterPrix(p.prixUSD)}</p>
-                        </div>
-                        <div class="mt-4 space-y-2">
-                            ${boutonAchat}
-                            <div class="flex gap-2">
-                                <a href="tel:${p.tel}" class="flex-1 bg-sky-50 text-[#007FFF] hover:bg-sky-100 text-center py-1.5 rounded-lg text-xs font-bold transition border border-sky-200">
-                                    <i class="fa-solid fa-phone"></i> Appeler
-                                </a>
-                                <a href="https://wa.me/${telClean}?text=Bonjour%20${encodeURIComponent(p.vendeurNom)},%20je%20souhaite%20commander%20:${encodeURIComponent(p.nom)}" target="_blank" class="flex-1 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 text-center py-1.5 rounded-lg text-xs font-bold transition border border-emerald-200">
-                                    <i class="fa-brands fa-whatsapp"></i> WhatsApp
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            grille.innerHTML = html;
+        // CHARGEMENT DEPUIS CLOUD FIRESTORE
+        async function chargerProduitsFirebase() {
+            try {
+                const querySnapshot = await window.getDocs(window.collection(window.db, "produits"));
+                produits = [];
+                querySnapshot.forEach((docSnap) => {
+                    produits.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                afficherProduits();
+            } catch (e) {
+                console.error("Erreur de chargement Firebase : ", e);
+            }
         }
 
-        function exposerArticle(event) {
+        // ENREGISTREMENT DANS CLOUD FIRESTORE
+        async function exposerArticleFirebase(event) {
             event.preventDefault();
             const nom = document.getElementById('pub-nom').value;
             const prixUSD = parseFloat(document.getElementById('pub-prix').value);
@@ -630,184 +330,64 @@
             const tel = document.getElementById('pub-tel').value;
             const desc = document.getElementById('pub-desc').value;
 
-            if (!validerNumeroRDC(tel)) {
-                alert("❌ Numéro invalide !");
-                return;
+            try {
+                await window.addDoc(window.collection(window.db, "produits"), {
+                    nom: nom,
+                    prixUSD: prixUSD,
+                    stock: stock,
+                    image: image,
+                    tel: tel,
+                    vendeurNom: utilisateurActuel ? utilisateurActuel.nom : "Vendeur Kinshasa",
+                    desc: desc || "Produit frais du marché.",
+                    createdAt: new Date()
+                });
+
+                alert("🎉 Produit enregistré sur le Cloud Firebase avec succès !");
+                document.getElementById('form-publier').reset();
+                naviguerVers('accueil');
+                chargerProduitsFirebase();
+            } catch (e) {
+                console.error("Erreur lors de l'envoi : ", e);
+                alert("Erreur d'enregistrement sur Firebase.");
             }
-
-            if(listeNoireNumeros.includes(tel)) {
-                alert("⛔ Votre numéro est bloqué sur Wenzephone.");
-                return;
-            }
-
-            const nouveauProduit = {
-                id: Date.now(),
-                nom,
-                prixUSD,
-                stock,
-                categorie: "Alimentation",
-                image,
-                tel,
-                vendeurNom: utilisateurActuel ? utilisateurActuel.nom : "Vendeur Kinshasa",
-                desc: desc || "Produit frais du marché."
-            };
-
-            produits.unshift(nouveauProduit);
-            afficherProduits();
-            rafraichirContacts();
-            document.getElementById('form-publier').reset();
-            alert("🎉 Produit publié avec succès sur le marché !");
-            naviguerVers('accueil');
         }
 
-        function rafraichirContacts() {
-            const container = document.getElementById('liste-contacts');
+        function afficherProduits() {
+            const grille = document.getElementById('grille-produits');
+            document.getElementById('compteur-articles').textContent = produits.length + " article(s) disponible(s)";
+            
+            if (produits.length === 0) {
+                grille.innerHTML = `<p class="text-slate-400 text-center col-span-2 py-8">Aucun produit publié pour le moment.</p>`;
+                return;
+            }
+
             let html = '';
-            let vus = new Set();
             produits.forEach(p => {
-                if(!vus.has(p.tel)) {
-                    vus.add(p.tel);
-                    html += `
-                        <div onclick="ouvrirChat('${p.vendeurNom}', '${p.tel}')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-[#007FFF]/10 text-[#007FFF] rounded-full flex items-center justify-center font-bold">
-                                    <i class="fa-solid fa-user"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-sm text-[#0F2844]">${p.vendeurNom}</h4>
-                                    <p class="text-xs text-slate-500">Contact: ${p.tel}</p>
-                                </div>
-                            </div>
-                            <span class="text-xs text-emerald-600 font-semibold"><i class="fa-brands fa-whatsapp"></i> Discuter</span>
-                        </div>
-                    `;
-                }
-            });
-            container.innerHTML = html;
-        }
-
-        function ajouterAuPanier(id) {
-            const p = produits.find(prod => prod.id === id);
-            if(p && p.stock > 0) {
-                panier.push(p);
-                mettreAJourBadge();
-                alert(p.nom + " ajouté au panier !");
-            } else {
-                alert("Désolé, ce produit est en rupture de stock.");
-            }
-        }
-
-        function mettreAJourBadge() {
-            const badge = document.getElementById('badge-panier');
-            if(panier.length > 0) {
-                badge.textContent = panier.length;
-                badge.classList.remove('hidden');
-            } else {
-                badge.classList.add('hidden');
-            }
-        }
-
-        function afficherPanier() {
-            const container = document.getElementById('contenu-panier');
-            const blocTotal = document.getElementById('bloc-total');
-            const texteTotal = document.getElementById('texte-total-panier');
-
-            if(panier.length === 0) {
-                container.innerHTML = '<p class="text-sm text-slate-500 text-center py-6">Votre panier est vide.</p>';
-                blocTotal.classList.add('hidden');
-                return;
-            }
-
-            let html = '';
-            let totalUSD = 0;
-            panier.forEach((item, index) => {
-                totalUSD += item.prixUSD;
                 html += `
-                    <div class="flex justify-between items-center border-b pb-2 text-sm">
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex flex-col justify-between">
                         <div>
-                            <h4 class="font-bold text-slate-800">${item.nom}</h4>
-                            <p class="text-[#007FFF] font-semibold">${formaterPrix(item.prixUSD)}</p>
+                            <div class="h-36 bg-slate-100 rounded-xl flex items-center justify-center overflow-hidden mb-3">
+                                ${p.image ? `<img src="${p.image}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-basket-shopping text-3xl text-slate-300"></i>`}
+                            </div>
+                            <h4 class="font-bold text-[#0F2844] text-sm">${p.nom}</h4>
+                            <p class="text-xs text-slate-500 mt-1">${p.desc}</p>
+                            <p class="text-[10px] text-slate-400 mt-1">Vendeur: <strong>${p.vendeurNom}</strong> (${p.tel})</p>
+                            <p class="text-[#007FFF] font-extrabold text-base mt-2">${formaterPrix(p.prixUSD)}</p>
                         </div>
-                        <button onclick="supprimerDuPanier(${index})" class="text-red-500 hover:text-red-700 text-xs"><i class="fa-solid fa-trash"></i> Retirer</button>
                     </div>
                 `;
             });
-            container.innerHTML = html;
-            texteTotal.textContent = formaterPrix(totalUSD);
-            blocTotal.classList.remove('hidden');
+            grille.innerHTML = html;
         }
 
-        function supprimerDuPanier(index) {
-            panier.splice(index, 1);
-            mettreAJourBadge();
-            afficherPanier();
-        }
-
-        function validerPaiementMobile() {
-            if(panier.length === 0) return;
-            const modePaiement = document.querySelector('input[name="paiement"]:checked').value;
-            const telPaiement = document.getElementById('tel-paiement').value;
-
-            if(!validerNumeroRDC(telPaiement)) {
-                alert("❌ Entrez un numéro RDC valide pour le paiement.");
-                return;
-            }
-
-            panier.forEach(item => {
-                let prod = produits.find(p => p.id === item.id);
-                if(prod && prod.stock > 0) {
-                    prod.stock -= 1;
-                }
-            });
-
-            let totalUSD = panier.reduce((sum, item) => sum + item.prixUSD, 0);
-            ventesTotalesUSD += totalUSD;
-            nombreCommandes += 1;
-
-            alert(`✅ Commande validée et payée avec succès via ${modePaiement} (${telPaiement}) !`);
-            
-            panier = [];
-            mettreAJourBadge();
-            afficherPanier();
-            afficherProduits();
-            mettreAJourRevenus();
-            naviguerVers('accueil');
-        }
-
-        function mettreAJourRevenus() {
-            document.getElementById('stat-ventes').textContent = formaterPrix(ventesTotalesUSD);
-            document.getElementById('stat-commandes').textContent = nombreCommandes;
-            document.getElementById('stat-revenunet').textContent = formaterPrix(ventesTotalesUSD * 0.90);
-
-            const hist = document.getElementById('liste-historique');
-            if(nombreCommandes > 0) {
-                hist.innerHTML = `<div class="p-2 bg-sky-50 text-[#0F2844] rounded-lg flex justify-between border border-sky-200"><span>Commande #${nombreCommandes}</span> <strong>${formaterPrix(ventesTotalesUSD)}</strong></div>`;
+        function controlerAccesPublier() {
+            if(!utilisateurActuel || utilisateurActuel.role !== 'Vendeur') {
+                alert("🔒 Veuillez d'abord vous connecter en tant que Vendeur.");
+                ouvrirAuth();
+            } else {
+                naviguerVers('publier');
             }
         }
-
-        function ouvrirChat(nom, tel) {
-            const telClean = nettoyerNumero(tel);
-            document.getElementById('chat-nom').textContent = nom;
-            document.getElementById('chat-num-label').textContent = tel;
-            document.getElementById('link-appel').href = "tel:" + tel;
-            document.getElementById('link-whatsapp').href = "https://wa.me/" + telClean;
-            naviguerVers('chat');
-        }
-
-        function envoyerMessageChat() {
-            const input = document.getElementById('input-chat');
-            const box = document.getElementById('box-discussion');
-            if(input && input.value.trim() !== '') {
-                box.innerHTML += `<div class="bg-[#007FFF] text-white p-3 rounded-2xl rounded-tr-none max-w-[80%] ml-auto shadow-sm">${input.value}</div>`;
-                input.value = '';
-                box.scrollTop = box.scrollHeight;
-            }
-        }
-
-        window.onload = function() {
-            afficherProduits();
-            rafraichirContacts();
-        };
     </script>
 </body>
 </html>
