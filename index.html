@@ -1,149 +1,215 @@
-<!-- Formulaire mis à jour avec Galerie et Lien Web -->
-<section id="page-publier" class="section-page hidden max-w-lg mx-auto bg-white p-6 rounded-2xl shadow-lg border space-y-4">
-    <h2 class="text-lg font-bold text-[#0F2844] border-b pb-3">Publier un produit ou légume</h2>
-    <form id="form-publier" onsubmit="exposerArticle(event)" class="space-y-4 text-sm">
-        <div>
-            <label class="block font-semibold text-slate-700 mb-1">Nom du produit / Légume</label>
-            <input type="text" id="pub-nom" required placeholder="ex: Pondu frais du jour, Matembele..." class="w-full border rounded-xl p-2.5">
-        </div>
-        <div class="grid grid-cols-2 gap-3">
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wenzephone</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-100 min-h-screen p-4">
+
+    <!-- Formulaire mis à jour avec Galerie et Lien Web -->
+    <section id="page-publier" class="section-page max-w-lg mx-auto bg-white p-6 rounded-2xl shadow-lg border space-y-4">
+        <h2 class="text-lg font-bold text-[#0F2844] border-b pb-3">Publier un produit ou légume</h2>
+        <form id="form-publier" onsubmit="exposerArticle(event)" class="space-y-4 text-sm">
             <div>
-                <label class="block font-semibold text-slate-700 mb-1">Prix ($ USD)</label>
-                <input type="number" step="0.01" id="pub-prix" required placeholder="ex: 2" class="w-full border rounded-xl p-2.5">
+                <label class="block font-semibold text-slate-700 mb-1">Nom du produit / Légume</label>
+                <input type="text" id="pub-nom" required placeholder="ex: Pondu frais du jour, Matembele..." class="w-full border rounded-xl p-2.5">
             </div>
-            <div>
-                <label class="block font-semibold text-slate-700 mb-1">Quantité Stock</label>
-                <input type="number" id="pub-stock" required placeholder="ex: 25" class="w-full border rounded-xl p-2.5 font-bold text-[#007FFF]">
-            </div>
-        </div>
-
-        <!-- CHOIX PHOTO : GALERIE OU LIEN WEB -->
-        <div class="border p-3 rounded-xl bg-slate-50 space-y-3">
-            <label class="block font-bold text-xs text-slate-700"><i class="fa-solid fa-image text-[#007FFF]"></i> Photo du produit :</label>
-            
-            <div>
-                <span class="text-[11px] text-slate-600 block mb-1">Option A : Prendre depuis la galerie de votre téléphone</span>
-                <input type="file" id="pub-fichier-galerie" accept="image/*" onchange="traiterImageGalerie(this)" class="w-full text-xs text-slate-500">
-            </div>
-
-            <div class="text-center text-[10px] text-slate-400 font-bold uppercase">OU</div>
-
-            <div>
-                <span class="text-[11px] text-slate-600 block mb-1">Option B : Coller un lien d'image Google / Web</span>
-                <input type="url" id="pub-image-url" placeholder="https://exemple.com/image.jpg" class="w-full border rounded-xl p-2 text-xs bg-white">
-            </div>
-
-            <div id="apercu-photo-container" class="hidden h-28 bg-white border rounded-xl flex items-center justify-center overflow-hidden">
-                <img id="img-apercu" src="" class="h-full object-contain">
-            </div>
-        </div>
-
-        <div>
-            <label class="block font-semibold text-slate-700 mb-1">Numéro de Contact RDC</label>
-            <input type="tel" id="pub-tel" required placeholder="ex: 0847135909" class="w-full border rounded-xl p-2.5">
-        </div>
-        <div>
-            <label class="block font-semibold text-slate-700 mb-1">Description / Précisions</label>
-            <textarea id="pub-desc" rows="2" placeholder="Détails sur la fraîcheur..." class="w-full border rounded-xl p-2.5"></textarea>
-        </div>
-        <button type="submit" class="w-full bg-[#007FFF] text-white font-bold py-3 rounded-xl shadow">Mettre en ligne sur le marché</button>
-    </form>
-</section>
-<!-- Chat avec boutons d'appels et d'envoi de photos -->
-<section id="page-chat" class="section-page hidden bg-white rounded-2xl shadow-lg border flex flex-col h-[520px]">
-    <div class="p-3 bg-[#007FFF] text-white rounded-t-2xl flex justify-between items-center">
-        <div class="flex items-center gap-3">
-            <button onclick="naviguerVers('messagerie')" class="text-white"><i class="fa-solid fa-arrow-left"></i></button>
-            <div>
-                <h3 id="chat-nom" class="font-bold text-sm">Vendeur</h3>
-                <p id="chat-num-label" class="text-[10px] text-[#FCD116]">Numéro certifié</p>
-            </div>
-        </div>
-        <!-- BOUTONS APPEL VOCAL, VIDÉO ET WHATSAPP -->
-        <div class="flex items-center gap-2">
-            <a id="link-appel-vocal" href="#" class="bg-white text-[#007FFF] w-8 h-8 rounded-full flex items-center justify-center text-xs shadow font-bold" title="Appel Vocal">
-                <i class="fa-solid fa-phone"></i>
-            </a>
-            <a id="link-appel-video" href="#" target="_blank" class="bg-sky-700 text-white w-8 h-8 rounded-full flex items-center justify-center text-xs shadow font-bold" title="Appel Vidéo">
-                <i class="fa-solid fa-video"></i>
-            </a>
-            <a id="link-whatsapp-chat" href="#" target="_blank" class="bg-green-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-xs shadow" title="WhatsApp">
-                <i class="fa-brands fa-whatsapp"></i>
-            </a>
-        </div>
-    </div>
-    
-    <div id="box-discussion" class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50 text-sm">
-        <div class="bg-white border p-3 rounded-2xl rounded-tl-none max-w-[80%] shadow-sm">Bonjour ! Échange sécurisé sur Wenzephone.</div>
-    </div>
-
-    <!-- ENVOI DE TEXTE ET DE PHOTO DANS LE CHAT -->
-    <div class="p-3 border-t bg-white flex items-center gap-2 rounded-b-2xl">
-        <label for="chat-input-photo" class="text-slate-400 hover:text-[#007FFF] cursor-pointer p-2 text-lg" title="Envoyer une photo">
-            <i class="fa-solid fa-paperclip"></i>
-        </label>
-        <input type="file" id="chat-input-photo" accept="image/*" onchange="envoyerPhotoChat(this)" class="hidden">
-        
-        <input type="text" id="input-chat" placeholder="Votre message..." class="flex-1 border rounded-xl px-3 py-2 text-sm focus:outline-none">
-        <button onclick="envoyerMessageChat()" class="bg-[#007FFF] text-white px-4 py-2 rounded-xl text-sm font-semibold">
-            <i class="fa-solid fa-paper-plane"></i>
-        </button>
-    </div>
-</section>
-// 1. Gestion de la photo issue de la Galerie
-function traiterImageGalerie(input) {
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            imagePubieeBase64 = e.target.result;
-            document.getElementById('img-apercu').src = imagePubieeBase64;
-            document.getElementById('apercu-photo-container').classList.remove('hidden');
-            document.getElementById('pub-image-url').value = '';
-        }
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
-// 2. Gestion des Commentaires publics sous chaque aliment
-function ajouterAvis(id) {
-    const p = produits.find(prod => prod.id === id);
-    const auteur = utilisateurActuel ? utilisateurActuel.nom : prompt("Votre nom :");
-    if(!auteur) return;
-    const texte = prompt("Votre commentaire public sur cet aliment :");
-    if(!texte) return;
-    const positif = confirm("Est-ce un avis positif 👍 ?\n(Cliquez sur 'OK' pour Positif, 'Annuler' pour Négatif)");
-    
-    if(!p.avis) p.avis = [];
-    p.avis.unshift({ auteur, texte, type: positif ? 'positif' : 'negatif' });
-    afficherProduits();
-}
-
-// 3. Gestion de l'ouverture du Chat avec Appels et Photos
-function ouvrirChat(nom, tel) {
-    const telClean = nettoyerNumero(tel);
-    document.getElementById('chat-nom').textContent = nom;
-    document.getElementById('chat-num-label').textContent = tel;
-    
-    document.getElementById('link-appel-vocal').href = "tel:" + tel;
-    document.getElementById('link-appel-video').href = "https://wa.me/" + telClean + "?text=Bonjour,%20je%20souhaite%20lancer%20un%20appel%20vidéo.";
-    document.getElementById('link-whatsapp-chat').href = "https://wa.me/" + telClean;
-    
-    naviguerVers('chat');
-}
-
-function envoyerPhotoChat(input) {
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const box = document.getElementById('box-discussion');
-            box.innerHTML += `
-                <div class="bg-[#007FFF] text-white p-2 rounded-2xl max-w-[70%] ml-auto shadow-sm">
-                    <img src="${e.target.result}" class="rounded-xl max-h-40 w-full object-cover">
-                    <span class="text-[9px] block text-right opacity-80 mt-1">Photo</span>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Prix ($ USD)</label>
+                    <input type="number" step="0.01" id="pub-prix" required placeholder="ex: 2" class="w-full border rounded-xl p-2.5">
                 </div>
-            `;
-            box.scrollTop = box.scrollHeight;
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Quantité Stock</label>
+                    <input type="number" id="pub-stock" required placeholder="ex: 25" class="w-full border rounded-xl p-2.5 font-bold text-[#007FFF]">
+                </div>
+            </div>
+
+            <!-- CHOIX PHOTO : GALERIE OU LIEN WEB -->
+            <div class="border p-3 rounded-xl bg-slate-50 space-y-3">
+                <label class="block font-bold text-xs text-slate-700"><i class="fa-solid fa-image text-[#007FFF]"></i> Photo du produit :</label>
+                
+                <div>
+                    <span class="text-[11px] text-slate-600 block mb-1">Option A : Prendre depuis la galerie de votre téléphone</span>
+                    <input type="file" id="pub-fichier-galerie" accept="image/*" onchange="traiterImageGalerie(this)" class="w-full text-xs text-slate-500">
+                </div>
+
+                <div class="text-center text-[10px] text-slate-400 font-bold uppercase">OU</div>
+
+                <div>
+                    <span class="text-[11px] text-slate-600 block mb-1">Option B : Coller un lien d'image Google / Web</span>
+                    <input type="url" id="pub-image-url" oninput="traiterLienWeb(this.value)" placeholder="https://exemple.com/image.jpg" class="w-full border rounded-xl p-2 text-xs bg-white">
+                </div>
+
+                <div id="apercu-photo-container" class="hidden h-28 bg-white border rounded-xl flex items-center justify-center overflow-hidden">
+                    <img id="img-apercu" src="" class="h-full object-contain">
+                </div>
+            </div>
+
+            <div>
+                <label class="block font-semibold text-slate-700 mb-1">Numéro de Contact RDC</label>
+                <input type="tel" id="pub-tel" required placeholder="ex: 0847135909" class="w-full border rounded-xl p-2.5">
+            </div>
+            <div>
+                <label class="block font-semibold text-slate-700 mb-1">Description / Précisions</label>
+                <textarea id="pub-desc" rows="2" placeholder="Détails sur la fraîcheur..." class="w-full border rounded-xl p-2.5"></textarea>
+            </div>
+            <button type="submit" class="w-full bg-[#007FFF] text-white font-bold py-3 rounded-xl shadow">Mettre en ligne sur le marché</button>
+        </form>
+    </section>
+
+    <!-- Chat avec boutons d'appels et d'envoi de photos -->
+    <section id="page-chat" class="section-page hidden max-w-lg mx-auto bg-white rounded-2xl shadow-lg border flex flex-col h-[520px] mt-6">
+        <div class="p-3 bg-[#007FFF] text-white rounded-t-2xl flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <button onclick="naviguerVers('publier')" class="text-white"><i class="fa-solid fa-arrow-left"></i></button>
+                <div>
+                    <h3 id="chat-nom" class="font-bold text-sm">Vendeur</h3>
+                    <p id="chat-num-label" class="text-[10px] text-[#FCD116]">Numéro certifié</p>
+                </div>
+            </div>
+            <!-- BOUTONS APPEL VOCAL, VIDÉO ET WHATSAPP -->
+            <div class="flex items-center gap-2">
+                <a id="link-appel-vocal" href="#" class="bg-white text-[#007FFF] w-8 h-8 rounded-full flex items-center justify-center text-xs shadow font-bold" title="Appel Vocal">
+                    <i class="fa-solid fa-phone"></i>
+                </a>
+                <a id="link-appel-video" href="#" target="_blank" class="bg-sky-700 text-white w-8 h-8 rounded-full flex items-center justify-center text-xs shadow font-bold" title="Appel Vidéo">
+                    <i class="fa-solid fa-video"></i>
+                </a>
+                <a id="link-whatsapp-chat" href="#" target="_blank" class="bg-green-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-xs shadow" title="WhatsApp">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </a>
+            </div>
+        </div>
+        
+        <div id="box-discussion" class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50 text-sm">
+            <div class="bg-white border p-3 rounded-2xl rounded-tl-none max-w-[80%] shadow-sm">Bonjour ! Échange sécurisé sur Wenzephone.</div>
+        </div>
+
+        <!-- ENVOI DE TEXTE ET DE PHOTO DANS LE CHAT -->
+        <div class="p-3 border-t bg-white flex items-center gap-2 rounded-b-2xl">
+            <label for="chat-input-photo" class="text-slate-400 hover:text-[#007FFF] cursor-pointer p-2 text-lg" title="Envoyer une photo">
+                <i class="fa-solid fa-paperclip"></i>
+            </label>
+            <input type="file" id="chat-input-photo" accept="image/*" onchange="envoyerPhotoChat(this)" class="hidden">
+            
+            <input type="text" id="input-chat" placeholder="Votre message..." class="flex-1 border rounded-xl px-3 py-2 text-sm focus:outline-none">
+            <button onclick="envoyerMessageChat()" class="bg-[#007FFF] text-white px-4 py-2 rounded-xl text-sm font-semibold">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- TOUT LE SCRIPT JAVASCRIPT CORRIGÉ -->
+    <script>
+        let imagePubieeBase64 = "";
+        let produits = [];
+        let utilisateurActuel = null;
+
+        function naviguerVers(pageId) {
+            document.querySelectorAll('.section-page').forEach(sec => sec.classList.add('hidden'));
+            const cible = document.getElementById('page-' + pageId);
+            if (cible) cible.classList.remove('hidden');
         }
-        reader.readAsDataURL(input.files[0]);
-    }
-}
+
+        // Nettoie le numéro pour WhatsApp et les appels
+        function nettoyerNumero(tel) {
+            if (!tel) return "";
+            return tel.replace(/\D/g, '');
+        }
+
+        // Gestion de la photo via un lien Web (Option B)
+        function traiterLienWeb(url) {
+            if (url.trim() !== "") {
+                imagePubieeBase64 = url;
+                document.getElementById('img-apercu').src = url;
+                document.getElementById('apercu-photo-container').classList.remove('hidden');
+                document.getElementById('pub-fichier-galerie').value = ''; 
+            } else {
+                document.getElementById('apercu-photo-container').classList.add('hidden');
+            }
+        }
+
+        // Gestion de la photo issue de la Galerie (Option A)
+        function traiterImageGalerie(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePubieeBase64 = e.target.result;
+                    document.getElementById('img-apercu').src = imagePubieeBase64;
+                    document.getElementById('apercu-photo-container').classList.remove('hidden');
+                    document.getElementById('pub-image-url').value = ''; 
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Gestion des Commentaires publics sous chaque aliment
+        function ajouterAvis(id) {
+            const p = produits.find(prod => prod.id === id);
+            const auteur = utilisateurActuel ? utilisateurActuel.nom : prompt("Votre nom :");
+            if(!auteur) return;
+            const texte = prompt("Votre commentaire public sur cet aliment :");
+            if(!texte) return;
+            const positif = confirm("Est-ce un avis positif 👍 ?\n(Cliquez sur 'OK' pour Positif, 'Annuler' pour Négatif)");
+            
+            if(!p.avis) p.avis = [];
+            p.avis.unshift({ auteur, texte, type: positif ? 'positif' : 'negatif' });
+        }
+
+        // Gestion de l'ouverture du Chat avec Appels et Photos
+        function ouvrirChat(nom, tel) {
+            const telClean = nettoyerNumero(tel);
+            document.getElementById('chat-nom').textContent = nom;
+            document.getElementById('chat-num-label').textContent = tel;
+            
+            document.getElementById('link-appel-vocal').href = "tel:" + telClean;
+            document.getElementById('link-appel-video').href = "https://wa.me/" + telClean + "?text=Bonjour,%20je%20souhaite%20lancer%20un%20appel%20vidéo.";
+            document.getElementById('link-whatsapp-chat').href = "https://wa.me/" + telClean;
+            
+            naviguerVers('chat');
+        }
+
+        function envoyerPhotoChat(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const box = document.getElementById('box-discussion');
+                    box.innerHTML += `
+                        <div class="bg-[#007FFF] text-white p-2 rounded-2xl max-w-[70%] ml-auto shadow-sm">
+                            <img src="${e.target.result}" class="rounded-xl max-h-40 w-full object-cover">
+                            <span class="text-[9px] block text-right opacity-80 mt-1">Photo</span>
+                        </div>
+                    `;
+                    box.scrollTop = box.scrollHeight;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function envoyerMessageChat() {
+            const input = document.getElementById('input-chat');
+            if(input.value.trim() !== "") {
+                const box = document.getElementById('box-discussion');
+                box.innerHTML += `
+                    <div class="bg-[#007FFF] text-white p-3 rounded-2xl rounded-tr-none max-w-[80%] ml-auto shadow-sm">
+                        ${input.value}
+                    </div>
+                `;
+                input.value = "";
+                box.scrollTop = box.scrollHeight;
+            }
+        }
+
+        function exposerArticle(event) {
+            event.preventDefault();
+            alert("Produit mis en ligne avec succès !");
+        }
+    </script>
+</body>
+</html>
