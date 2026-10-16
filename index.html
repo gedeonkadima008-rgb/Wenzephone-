@@ -1,393 +1,213 @@
-<!DOCTYPE html>
-<html lang="fr" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wenzephone - Marché Alimentaire & Électronique Kinshasa</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icônes -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+// Taux de change fixe (1 USD = 2800 CDF)
+const TAUX_CDF = 2800;
+let deviseActuelle = 'USD';
 
-    <!-- INTEGRATION FIREBASE SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+// Produits de base (prix stockés en USD)
+let produits = [
+    { id: 1, nom: "Smartphone Android 64GB", prixUSD: 120, categorie: "Électronique", tel: "+243820000000", desc: "Téléphone neuf sous carton." },
+    { id: 2, nom: "Sac de Riz 25kg Premium", prixUSD: 30, categorie: "Alimentation", tel: "+243810000000", desc: "Riz de qualité supérieure." }
+];
 
-        // Vos identifiants de projet Firebase Wenzephone
-        const firebaseConfig = {
-            apiKey: "AIzaSyCC0-H5pT-vQ...", // Ta clé API Firebase
-            authDomain: "wenzephone.firebaseapp.com",
-            projectId: "wenzephone",
-            storageBucket: "wenzephone.firebasestorage.app",
-            messagingSenderId: "72697167422",
-            appId: "1:72697167422:web:wenzephone",
-            measurementId: "G-QJSRL65..."
-        };
+let panier = [];
+let ventesTotalesUSD = 0;
+let nombreCommandes = 0;
 
-        // Initialisation de Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+// NAVIGATION ENTRE LES PAGES
+function naviguerVers(pageId) {
+    document.querySelectorAll('.section-page').forEach(el => el.classList.add('hidden'));
+    const cible = document.getElementById('page-' + pageId);
+    if(cible) cible.classList.remove('hidden');
 
-        // Exposer les méthodes Firebase globalement
-        window.db = db;
-        window.collection = collection;
-        window.addDoc = addDoc;
-        window.getDocs = getDocs;
-        window.doc = doc;
-        window.deleteDoc = deleteDoc;
+    ['accueil', 'publier', 'messagerie', 'revenus'].forEach(id => {
+        const btn = document.getElementById('nav-' + id);
+        if(btn) {
+            btn.classList.remove('text-emerald-600');
+            btn.classList.add('text-slate-400');
+        }
+    });
 
-        // Charger les données dès l'ouverture de la page
-        window.addEventListener('DOMContentLoaded', () => {
-            chargerProduitsFirebase();
-        });
-    </script>
-</head>
-<body class="bg-[#F0F6FC] font-sans min-h-screen flex flex-col text-[#0F2844]">
+    const activeBtn = document.getElementById('nav-' + pageId);
+    if(activeBtn) {
+        activeBtn.classList.remove('text-slate-400');
+        activeBtn.classList.add('text-emerald-600');
+    }
+}
 
-    <!-- MODAL D'INSCRIPTION / CONNEXION -->
-    <div id="modal-auth" class="fixed inset-0 bg-[#0F2844]/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 space-y-5 border-t-4 border-[#007FFF] relative">
-            <button onclick="fermerAuth()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold text-lg p-1">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-            
-            <div class="text-center space-y-2">
-                <div class="w-16 h-16 bg-[#007FFF]/10 text-[#007FFF] rounded-2xl mx-auto flex items-center justify-center text-2xl font-bold shadow-inner">
-                    <i class="fa-solid fa-user-plus"></i>
-                </div>
-                <h2 class="text-xl font-extrabold text-[#0F2844]">Accès Wenzephone RDC</h2>
-                <p class="text-xs text-slate-500">Connectez-vous selon votre profil (Client ou Vendeur).</p>
-            </div>
+// FORMATAGE DU PRIX SELON LA DEVISE
+function formaterPrix(prixUSD) {
+    if (deviseActuelle === 'CDF') {
+        return (prixUSD * TAUX_CDF).toLocaleString('fr-FR') + ' FC';
+    }
+    return '$ ' + prixUSD.toFixed(2);
+}
 
-            <form id="form-auth" onsubmit="connecterUtilisateur(event)" class="space-y-4 text-sm">
+function changerDevise() {
+    deviseActuelle = document.getElementById('select-devise').value;
+    afficherProduits();
+    afficherPanier();
+    mettreAJourRevenus();
+}
+
+// AFFICHAGE DYNAMIQUE DES PRODUITS
+function afficherProduits() {
+    const grille = document.getElementById('grille-produits');
+    const compteur = document.getElementById('compteur-articles');
+    if(!grille) return;
+
+    if(compteur) compteur.textContent = produits.length + " article(s) disponible(s)";
+    
+    let html = '';
+    produits.forEach(p => {
+        html += `
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex flex-col justify-between">
                 <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Nom complet / Nom de la boutique</label>
-                    <input type="text" id="auth-nom" required placeholder="ex: Maman Nsimba / Gédéon" class="w-full border rounded-xl p-3 focus:border-[#007FFF] focus:outline-none bg-slate-50">
+                    <div class="h-32 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 mb-3">
+                        <i class="fa-solid fa-box-open text-4xl"></i>
+                    </div>
+                    <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-bold">${p.categorie}</span>
+                    <h4 class="font-bold text-slate-800 text-sm mt-1">${p.nom}</h4>
+                    <p class="text-xs text-slate-500 mt-1 line-clamp-2">${p.desc}</p>
+                    <p class="text-emerald-600 font-extrabold text-base mt-2">${formaterPrix(p.prixUSD)}</p>
                 </div>
-                <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Votre Numéro de Téléphone RDC (Réel)</label>
-                    <input type="tel" id="auth-tel" required placeholder="ex: 0847135909" class="w-full border rounded-xl p-3 focus:border-[#007FFF] focus:outline-none bg-slate-50">
-                </div>
-                <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Je suis un :</label>
-                    <select id="auth-role" class="w-full border rounded-xl p-3 focus:border-[#007FFF] focus:outline-none bg-slate-50 font-bold text-[#007FFF]">
-                        <option value="Client">Client (Acheter & Commander)</option>
-                        <option value="Vendeur">Vendeur (Publier & Gérer mon stock)</option>
-                    </select>
-                </div>
-                <button type="submit" class="w-full bg-[#007FFF] hover:bg-[#0065CC] text-white font-bold py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-check-circle"></i> Valider et Entrer
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- BANDEAU SUPÉRIEUR -->
-    <div class="bg-[#007FFF] text-white text-xs py-2 px-4 sm:px-8 flex justify-between items-center border-b-2 border-[#FCD116]">
-        <div class="flex items-center gap-3">
-            <span class="inline-flex items-center gap-1 font-medium">
-                <i class="fa-brands fa-whatsapp text-[#FCD116] text-sm"></i> Kinshasa Market Support
-            </span>
-        </div>
-        <div class="flex items-center gap-3">
-            <button id="btn-ouvrir-auth" onclick="ouvrirAuth()" class="bg-[#FCD116] hover:bg-[#e5bc00] text-[#0F2844] font-extrabold px-3 py-1 rounded-lg shadow-sm transition flex items-center gap-1">
-                <i class="fa-solid fa-user-lock"></i> S'inscrire / Se connecter
-            </button>
-            <span id="label-profil-connecte" class="hidden font-semibold text-[#FCD116]"></span>
-            
-            <label for="select-devise" class="font-semibold text-white/90">Devise :</label>
-            <select id="select-devise" onchange="changerDevise()" class="bg-[#0055B3] text-white rounded px-2 py-1 text-xs border border-white/30 focus:outline-none font-bold">
-                <option value="USD">USD ($)</option>
-                <option value="CDF">CDF (FC)</option>
-            </select>
-        </div>
-    </div>
-
-    <!-- EN-TÊTE PRINCIPAL -->
-    <header class="bg-[#0F2844] text-white shadow-md sticky top-0 z-40 border-b-4 border-[#CE1126]">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-            <h1 onclick="naviguerVers('accueil')" class="text-xl font-extrabold flex items-center gap-2 cursor-pointer text-[#007FFF]">
-                <i class="fa-solid fa-store text-[#FCD116]"></i> Wenzephone <span class="text-[10px] bg-emerald-600 px-2 py-0.5 rounded text-white font-normal ml-1">Cloud</span>
-            </h1>
-            <div class="flex items-center gap-3">
-                <button onclick="naviguerVers('panier')" class="relative p-2 text-slate-200 hover:text-[#007FFF] transition">
-                    <i class="fa-solid fa-cart-shopping text-xl"></i>
-                    <span id="badge-panier" class="absolute -top-1 -right-1 bg-[#CE1126] text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold hidden">0</span>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- CONTENU PRINCIPAL -->
-    <main class="max-w-4xl mx-auto w-full flex-1 p-4 pb-28">
-
-        <!-- 1. PAGE ACCUEIL -->
-        <section id="page-accueil" class="section-page space-y-6">
-            <div class="bg-gradient-to-r from-[#007FFF] via-[#0055B3] to-[#0F2844] text-white p-6 rounded-3xl shadow-xl border-b-4 border-[#FCD116] relative overflow-hidden">
-                <div class="max-w-xl space-y-3 z-10 relative">
-                    <span class="bg-[#FCD116] text-[#0F2844] text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                        <i class="fa-solid fa-basket-shopping"></i> Produits Locaux Kinshasa
-                    </span>
-                    <h2 class="text-xl sm:text-2xl font-black leading-tight text-white">
-                        Le Grand Marché Numérique de la RDC connecté sur Firebase Cloud !
-                    </h2>
-                    <p class="text-xs text-slate-200 leading-relaxed">
-                        Retrouvez le pondu frais, les matembele, le maïs, le charbon et l'électronique sauvegardés en temps réel.
-                    </p>
-                    <div class="pt-2 flex flex-wrap gap-3">
-                        <button onclick="ouvrirAuth()" class="bg-[#FCD116] hover:bg-[#e5bc00] text-[#0F2844] font-extrabold text-xs py-2.5 px-4 rounded-xl shadow-lg transition flex items-center gap-2">
-                            <i class="fa-solid fa-user-plus"></i> S'inscrire maintenant
-                        </button>
-                        <button onclick="controlerAccesPublier()" class="bg-white/10 hover:bg-white/20 text-white font-bold text-xs py-2.5 px-4 rounded-xl transition border border-white/30">
-                            + Espace Vendeur (Publier)
-                        </button>
+                <div class="mt-4 space-y-2">
+                    <button onclick="ajouterAuPanier(${p.id})" class="w-full bg-[#1E3E62] hover:bg-[#0B192C] text-white py-2 rounded-xl text-xs font-semibold shadow transition">
+                        <i class="fa-solid fa-cart-plus"></i> Ajouter au panier
+                    </button>
+                    <div class="flex gap-2">
+                        <a href="tel:${p.tel}" class="flex-1 bg-emerald-100 text-emerald-800 hover:bg-emerald-200 text-center py-1.5 rounded-lg text-xs font-bold transition">
+                            <i class="fa-solid fa-phone"></i> Appeler
+                        </a>
+                        <a href="https://wa.me/${p.tel.replace('+','')}" target="_blank" class="flex-1 bg-green-100 text-green-800 hover:bg-green-200 text-center py-1.5 rounded-lg text-xs font-bold transition">
+                            <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                        </a>
                     </div>
                 </div>
             </div>
+        `;
+    });
+    grille.innerHTML = html;
+}
 
-            <div class="flex justify-between items-center">
-                <h3 class="font-bold text-[#0F2844] text-base">Aliments & Articles Disponibles au Marché</h3>
-                <span class="text-xs text-slate-500 font-medium" id="compteur-articles">Chargement des données...</span>
-            </div>
+// PUBLIER UN ARTICLE
+function exposerArticle(event) {
+    event.preventDefault();
+    const nom = document.getElementById('pub-nom').value;
+    const prixUSD = parseFloat(document.getElementById('pub-prix').value);
+    const categorie = document.getElementById('pub-categorie').value;
+    const tel = document.getElementById('pub-tel').value;
+    const desc = document.getElementById('pub-desc').value;
 
-            <div id="grille-produits" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
-        </section>
+    const nouveauProduit = {
+        id: Date.now(),
+        nom,
+        prixUSD,
+        categorie,
+        tel,
+        desc: desc || "Aucune description fournie."
+    };
 
-        <!-- 2. PAGE PUBLIER -->
-        <section id="page-publier" class="section-page hidden max-w-lg mx-auto bg-white p-6 rounded-2xl shadow-lg border border-slate-200 space-y-4">
-            <h2 class="text-lg font-bold text-[#0F2844] flex items-center gap-2 border-b pb-3">
-                <i class="fa-solid fa-box-archive text-[#007FFF]"></i> Publication Vendeur (Sauvegarde Firebase)
-            </h2>
-            <form id="form-publier" onsubmit="exposerArticleFirebase(event)" class="space-y-4 text-sm">
+    produits.unshift(nouveauProduit);
+    afficherProduits();
+    document.getElementById('form-publier').reset();
+    alert("Félicitations ! Votre article a été publié avec succès sur Wenzephone.");
+    naviguerVers('accueil');
+}
+
+// GESTION DU PANIER
+function ajouterAuPanier(id) {
+    const p = produits.find(prod => prod.id === id);
+    if(p) {
+        panier.push(p);
+        mettreAJourBadge();
+        alert(p.nom + " ajouté au panier !");
+    }
+}
+
+function mettreAJourBadge() {
+    const badge = document.getElementById('badge-panier');
+    if(!badge) return;
+    if(panier.length > 0) {
+        badge.textContent = panier.length;
+        badge.classList.remove('hidden');
+    } else {
+        badge.classList.add('hidden');
+    }
+}
+
+function afficherPanier() {
+    const container = document.getElementById('contenu-panier');
+    const blocTotal = document.getElementById('bloc-total');
+    const texteTotal = document.getElementById('texte-total-panier');
+    if(!container) return;
+
+    if(panier.length === 0) {
+        container.innerHTML = '<p class="text-sm text-slate-500 text-center py-6">Votre panier est vide.</p>';
+        if(blocTotal) blocTotal.classList.add('hidden');
+        return;
+    }
+
+    let html = '';
+    let totalUSD = 0;
+    panier.forEach((item, index) => {
+        totalUSD += item.prixUSD;
+        html += `
+            <div class="flex justify-between items-center border-b pb-2 text-sm">
                 <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Nom du produit (ex: Pondu frais)</label>
-                    <input type="text" id="pub-nom" required placeholder="ex: Paquet de Pondu Frais" class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none">
+                    <h4 class="font-bold text-slate-800">${item.nom}</h4>
+                    <p class="text-emerald-600 font-semibold">${formaterPrix(item.prixUSD)}</p>
                 </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Prix ($ USD)</label>
-                        <input type="number" step="0.01" id="pub-prix" required placeholder="ex: 3" class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Quantité en Stock</label>
-                        <input type="number" id="pub-stock" required placeholder="ex: 25" class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none font-bold text-[#007FFF]">
-                    </div>
-                </div>
-                <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Lien de l'image (Optionnel)</label>
-                    <input type="url" id="pub-image" placeholder="https://..." class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none">
-                </div>
-                <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Votre Numéro de Contact</label>
-                    <input type="tel" id="pub-tel" required placeholder="ex: 0847135909" class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none">
-                </div>
-                <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Description</label>
-                    <textarea id="pub-desc" rows="2" placeholder="Frais du jour récolté au marché..." class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none"></textarea>
-                </div>
-                <button type="submit" class="w-full bg-[#007FFF] hover:bg-[#0065CC] text-white font-bold py-3 rounded-xl shadow transition">
-                    Mettre en ligne sur le Cloud
-                </button>
-            </form>
-        </section>
-
-        <!-- 3. PAGE MESSAGERIE -->
-        <section id="page-messagerie" class="section-page hidden space-y-4">
-            <h2 class="text-lg font-bold text-[#0F2844]">Contacts Directs des Vendeurs</h2>
-            <div id="liste-contacts" class="bg-white rounded-2xl shadow border border-slate-200 divide-y"></div>
-        </section>
-
-        <!-- 4. PAGE REVENUS -->
-        <section id="page-revenus" class="section-page hidden space-y-4">
-            <h2 class="text-lg font-bold text-[#0F2844] flex items-center gap-2">
-                <i class="fa-solid fa-chart-line text-[#007FFF]"></i> Bilan & Suivi des Ventes
-            </h2>
-            <div id="avertissement-client" class="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-2xl text-xs hidden">
-                <i class="fa-solid fa-triangle-exclamation"></i> Accès restreint : Reservé aux vendeurs.
+                <button onclick="supprimerDuPanier(${index})" class="text-red-500 hover:text-red-700 text-xs"><i class="fa-solid fa-trash"></i> Supprimer</button>
             </div>
-            <div id="contenu-revenus-vendeur" class="space-y-4">
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    <div class="bg-white p-4 rounded-2xl shadow border border-slate-200">
-                        <p class="text-xs text-slate-500">Ventes Totales</p>
-                        <p id="stat-ventes" class="text-xl font-bold text-[#0F2844] mt-1">$ 0.00</p>
-                    </div>
-                    <div class="bg-white p-4 rounded-2xl shadow border border-slate-200">
-                        <p class="text-xs text-slate-500">Commandes Reçues</p>
-                        <p id="stat-commandes" class="text-xl font-bold text-[#007FFF] mt-1">0</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+        `;
+    });
+    container.innerHTML = html;
+    if(texteTotal) texteTotal.textContent = formaterPrix(totalUSD);
+    if(blocTotal) blocTotal.classList.remove('hidden');
+}
 
-        <!-- 5. PAGE PANIER -->
-        <section id="page-panier" class="section-page hidden space-y-4">
-            <h2 class="text-lg font-bold text-[#0F2844]">Mon Panier & Paiement Mobile</h2>
-            <div id="contenu-panier" class="bg-white p-4 rounded-2xl shadow border border-slate-200 space-y-3">
-                <p class="text-sm text-slate-500 text-center py-6">Votre panier est vide.</p>
-            </div>
-        </section>
-    </main>
+function supprimerDuPanier(index) {
+    panier.splice(index, 1);
+    mettreAJourBadge();
+    afficherPanier();
+}
 
-    <!-- BARRE DE NAVIGATION INFÉRIEURE -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-2xl z-40">
-        <div class="max-w-md mx-auto flex justify-around py-2">
-            <button onclick="naviguerVers('accueil')" id="nav-accueil" class="flex flex-col items-center text-[#007FFF] text-[11px] font-bold">
-                <i class="fa-solid fa-house text-lg"></i> Accueil
-            </button>
-            <button onclick="controlerAccesPublier()" id="nav-publier" class="flex flex-col items-center text-slate-400 text-[11px] font-semibold">
-                <i class="fa-solid fa-plus-circle text-lg"></i> Publier
-            </button>
-            <button onclick="naviguerVers('messagerie')" id="nav-messagerie" class="flex flex-col items-center text-slate-400 text-[11px] font-semibold">
-                <i class="fa-solid fa-comments text-lg"></i> Messagerie
-            </button>
-            <button onclick="naviguerVers('revenus')" id="nav-revenus" class="flex flex-col items-center text-slate-400 text-[11px] font-semibold">
-                <i class="fa-solid fa-chart-line text-lg"></i> Bilan
-            </button>
-        </div>
-    </nav>
+function validerCommandeGlobale() {
+    if(panier.length === 0) return;
+    let totalUSD = panier.reduce((sum, item) => sum + item.prixUSD, 0);
+    ventesTotalesUSD += totalUSD;
+    nombreCommandes += 1;
 
-    <!-- SCRIPT APPLICATION -->
-    <script>
-        const TAUX_CDF = 2800;
-        let deviseActuelle = 'USD';
-        let utilisateurActuel = null;
-        let produits = [];
+    alert("Votre commande de " + formaterPrix(totalUSD) + " a été transmise avec succès !");
+    panier = [];
+    mettreAJourBadge();
+    afficherPanier();
+    mettreAJourRevenus();
+    naviguerVers('revenus');
+}
 
-        function ouvrirAuth() { document.getElementById('modal-auth').classList.remove('hidden'); }
-        function fermerAuth() { document.getElementById('modal-auth').classList.add('hidden'); }
+// CALCUL DES REVENUS
+function mettreAJourRevenus() {
+    const statVentes = document.getElementById('stat-ventes');
+    const statCmd = document.getElementById('stat-commandes');
+    const statNet = document.getElementById('stat-revenunet');
+    const hist = document.getElementById('liste-historique');
 
-        function connecterUtilisateur(event) {
-            event.preventDefault();
-            const nom = document.getElementById('auth-nom').value.trim();
-            const tel = document.getElementById('auth-tel').value.trim();
-            const role = document.getElementById('auth-role').value;
+    if(statVentes) statVentes.textContent = formaterPrix(ventesTotalesUSD);
+    if(statCmd) statCmd.textContent = nombreCommandes;
+    if(statNet) statNet.textContent = formaterPrix(ventesTotalesUSD * 0.90);
 
-            utilisateurActuel = { nom, tel, role };
-            fermerAuth();
+    if(hist && nombreCommandes > 0) {
+        hist.innerHTML = `<div class="p-2 bg-emerald-50 text-emerald-800 rounded-lg flex justify-between border border-emerald-200"><span>Vente #${nombreCommandes} validée</span> <strong>${formaterPrix(ventesTotalesUSD)}</strong></div>`;
+    }
+}
 
-            document.getElementById('btn-ouvrir-auth').classList.add('hidden');
-            const lbl = document.getElementById('label-profil-connecte');
-            lbl.textContent = `👤 ${nom} (${role})`;
-            lbl.classList.remove('hidden');
+// CHAT ET MESSAGERIE
+function ouvrirChat(nom, tel) {
+    const nomChat = document.getElementById('chat-nom');
+    const linkAppel = document.getElementById('link-appel');
+    const linkWa = document.getElementById('link-whatsapp');
 
-            if(role === 'Vendeur') {
-                document.getElementById('pub-tel').value = tel;
-            }
-            alert(`✅ Bienvenue ${nom} (${role}) !`);
-        }
-
-        function naviguerVers(pageId) {
-            document.querySelectorAll('.section-page').forEach(el => el.classList.add('hidden'));
-            const cible = document.getElementById('page-' + pageId);
-            if(cible) cible.classList.remove('hidden');
-
-            ['accueil', 'publier', 'messagerie', 'revenus'].forEach(id => {
-                const btn = document.getElementById('nav-' + id);
-                if(btn) {
-                    btn.classList.remove('text-[#007FFF]');
-                    btn.classList.add('text-slate-400');
-                }
-            });
-            const activeBtn = document.getElementById('nav-' + pageId);
-            if(activeBtn) {
-                activeBtn.classList.remove('text-slate-400');
-                activeBtn.classList.add('text-[#007FFF]');
-            }
-        }
-
-        function formaterPrix(prixUSD) {
-            if (deviseActuelle === 'CDF') return (prixUSD * TAUX_CDF).toLocaleString('fr-FR') + ' FC';
-            return '$ ' + prixUSD.toFixed(2);
-        }
-
-        function changerDevise() {
-            deviseActuelle = document.getElementById('select-devise').value;
-            afficherProduits();
-        }
-
-        // CHARGEMENT DEPUIS CLOUD FIRESTORE
-        async function chargerProduitsFirebase() {
-            try {
-                const querySnapshot = await window.getDocs(window.collection(window.db, "produits"));
-                produits = [];
-                querySnapshot.forEach((docSnap) => {
-                    produits.push({ id: docSnap.id, ...docSnap.data() });
-                });
-                afficherProduits();
-            } catch (e) {
-                console.error("Erreur de chargement Firebase : ", e);
-            }
-        }
-
-        // ENREGISTREMENT DANS CLOUD FIRESTORE
-        async function exposerArticleFirebase(event) {
-            event.preventDefault();
-            const nom = document.getElementById('pub-nom').value;
-            const prixUSD = parseFloat(document.getElementById('pub-prix').value);
-            const stock = parseInt(document.getElementById('pub-stock').value);
-            const image = document.getElementById('pub-image').value;
-            const tel = document.getElementById('pub-tel').value;
-            const desc = document.getElementById('pub-desc').value;
-
-            try {
-                await window.addDoc(window.collection(window.db, "produits"), {
-                    nom: nom,
-                    prixUSD: prixUSD,
-                    stock: stock,
-                    image: image,
-                    tel: tel,
-                    vendeurNom: utilisateurActuel ? utilisateurActuel.nom : "Vendeur Kinshasa",
-                    desc: desc || "Produit frais du marché.",
-                    createdAt: new Date()
-                });
-
-                alert("🎉 Produit enregistré sur le Cloud Firebase avec succès !");
-                document.getElementById('form-publier').reset();
-                naviguerVers('accueil');
-                chargerProduitsFirebase();
-            } catch (e) {
-                console.error("Erreur lors de l'envoi : ", e);
-                alert("Erreur d'enregistrement sur Firebase.");
-            }
-        }
-
-        function afficherProduits() {
-            const grille = document.getElementById('grille-produits');
-            document.getElementById('compteur-articles').textContent = produits.length + " article(s) disponible(s)";
-            
-            if (produits.length === 0) {
-                grille.innerHTML = `<p class="text-slate-400 text-center col-span-2 py-8">Aucun produit publié pour le moment.</p>`;
-                return;
-            }
-
-            let html = '';
-            produits.forEach(p => {
-                html += `
-                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex flex-col justify-between">
-                        <div>
-                            <div class="h-36 bg-slate-100 rounded-xl flex items-center justify-center overflow-hidden mb-3">
-                                ${p.image ? `<img src="${p.image}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-basket-shopping text-3xl text-slate-300"></i>`}
-                            </div>
-                            <h4 class="font-bold text-[#0F2844] text-sm">${p.nom}</h4>
-                            <p class="text-xs text-slate-500 mt-1">${p.desc}</p>
-                            <p class="text-[10px] text-slate-400 mt-1">Vendeur: <strong>${p.vendeurNom}</strong> (${p.tel})</p>
-                            <p class="text-[#007FFF] font-extrabold text-base mt-2">${formaterPrix(p.prixUSD)}</p>
-                        </div>
-                    </div>
-                `;
-            });
-            grille.innerHTML = html;
-        }
-
-        function controlerAccesPublier() {
-            if(!utilisateurActuel || utilisateurActuel.role !== 'Vendeur') {
-                alert("🔒 Veuillez d'abord vous connecter en tant que Vendeur.");
-                ouvrirAuth();
-            } else {
-                naviguerVers('publier');
-            }
-        }
-    </script>
-</body>
-</html>
+    if(nomChat) nomChat.textContent = nom;
+    if(linkAppel) linkAppel.href = "tel:" + tel;
+    if(linkWa) linkWa.href = "https://wa.me/" + tel.replace('+','');
+  
