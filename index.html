@@ -8,6 +8,18 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icônes -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        body { -webkit-tap-highlight-color: transparent; }
+        .section-page { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: #F8FAFC; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
 </head>
 <body class="bg-[#F0F6FC] font-sans min-h-screen flex flex-col text-[#0F2844]">
 
@@ -69,7 +81,6 @@
             </select>
         </div>
     </div>
-
     <!-- EN-TÊTE PRINCIPAL -->
     <header class="bg-[#0F2844] text-white shadow-md sticky top-0 z-40 border-b-4 border-[#CE1126]">
         <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
@@ -91,7 +102,7 @@
     <!-- CONTENU PRINCIPAL -->
     <main class="max-w-4xl mx-auto w-full flex-1 p-4 pb-28">
 
-        <!-- 1. PAGE ACCUEIL (VITRINE) -->
+        <!-- 1. PAGE ACCUEIL -->
         <section id="page-accueil" class="section-page space-y-6">
             <div class="bg-gradient-to-r from-[#007FFF] via-[#0055B3] to-[#0F2844] text-white p-6 rounded-3xl shadow-xl border-b-4 border-[#FCD116] relative overflow-hidden">
                 <div class="max-w-xl space-y-3 z-10 relative">
@@ -122,6 +133,7 @@
 
             <div id="grille-produits" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
         </section>
+
         <!-- 2. PAGE PUBLIER -->
         <section id="page-publier" class="section-page hidden max-w-lg mx-auto bg-white p-6 rounded-2xl shadow-lg border border-slate-200 space-y-4">
             <h2 class="text-lg font-bold text-[#0F2844] flex items-center gap-2 border-b pb-3">
@@ -129,8 +141,8 @@
             </h2>
             <form id="form-publier" onsubmit="exposerArticle(event)" class="space-y-4 text-sm">
                 <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Nom du produit (ex: Pondu frais, Maïs, etc.)</label>
-                    <input type="text" id="pub-nom" required placeholder="ex: Paquet de Pondu Frais (Feuilles de manioc)" class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none">
+                    <label class="block font-semibold text-slate-700 mb-1">Nom du produit</label>
+                    <input type="text" id="pub-nom" required placeholder="ex: Paquet de Pondu Frais" class="w-full border rounded-xl p-2.5 focus:border-[#007FFF] focus:outline-none">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
@@ -159,7 +171,6 @@
                 </button>
             </form>
         </section>
-
         <!-- 3. PAGE MESSAGERIE -->
         <section id="page-messagerie" class="section-page hidden space-y-4">
             <h2 class="text-lg font-bold text-[#0F2844]">Contacts Directs des Vendeurs</h2>
@@ -198,7 +209,7 @@
             </div>
         </section>
 
-        <!-- 4. PAGE REVENUS (RÉSERVÉE VENDEURS) -->
+        <!-- 4. PAGE REVENUS -->
         <section id="page-revenus" class="section-page hidden space-y-4">
             <h2 class="text-lg font-bold text-[#0F2844] flex items-center gap-2">
                 <i class="fa-solid fa-chart-line text-[#007FFF]"></i> Bilan & Suivi des Ventes (Espace Vendeur)
@@ -230,7 +241,7 @@
             </div>
         </section>
 
-        <!-- 5. PAGE PANIER (CLIENTS) -->
+        <!-- 5. PAGE PANIER -->
         <section id="page-panier" class="section-page hidden space-y-4">
             <h2 class="text-lg font-bold text-[#0F2844]">Mon Panier & Paiement Mobile</h2>
             <div id="contenu-panier" class="bg-white p-4 rounded-2xl shadow border border-slate-200 space-y-3">
@@ -272,7 +283,7 @@
             </div>
         </section>
 
-        <!-- 6. NOUVELLE PAGE: ESPACE ADMINISTRATEUR (PROPRIÉTAIRE) -->
+        <!-- 6. PAGE ADMINISTRATEUR -->
         <section id="page-admin" class="section-page hidden space-y-4">
             <div class="bg-[#0F2844] text-white p-5 rounded-2xl shadow-lg border-l-4 border-amber-400 flex justify-between items-center">
                 <div>
@@ -286,7 +297,6 @@
                 </button>
             </div>
 
-            <!-- Signalements reçus -->
             <div class="bg-white p-4 rounded-2xl shadow border border-slate-200 space-y-3">
                 <h3 class="font-bold text-sm text-[#0F2844] flex items-center justify-between">
                     <span><i class="fa-solid fa-flag text-red-500"></i> Signalements de la communauté</span>
@@ -297,13 +307,11 @@
                 </div>
             </div>
 
-            <!-- Modération des annonces du marché -->
             <div class="bg-white p-4 rounded-2xl shadow border border-slate-200 space-y-3">
                 <h3 class="font-bold text-sm text-[#0F2844]"><i class="fa-solid fa-list-check text-[#007FFF]"></i> Modération des articles en ligne</h3>
                 <div id="liste-produits-admin" class="text-xs space-y-3"></div>
             </div>
 
-            <!-- Liste des numéros banni (Blacklist) -->
             <div class="bg-white p-4 rounded-2xl shadow border border-slate-200 space-y-3">
                 <h3 class="font-bold text-sm text-red-700"><i class="fa-solid fa-ban"></i> Liste Noire (Numéros bloqués)</h3>
                 <div class="flex gap-2">
@@ -335,478 +343,3 @@
             </button>
         </div>
     </nav>
-    <!-- SCRIPT JAVASCRIPT GESTION CLIENT / VENDEUR & ADMIN MODÉRATION -->
-    <script>
-        const TAUX_CDF = 2800;
-        let deviseActuelle = 'USD';
-        let utilisateurActuel = null;
-        let adminConnecte = false;
-
-        // Numéros bloqués par le propriétaire (Blacklist)
-        let listeNoireNumeros = [];
-        let signalements = [];
-
-        // Produits de base
-        let produits = [
-            { id: 1, nom: "Pondu Frais (Feuilles de manioc pilées)", prixUSD: 2.50, stock: 40, categorie: "Alimentation", image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400", tel: "0847135909", vendeurNom: "Maman Nsimba", desc: "Pondu frais du jour, bien tendre du marché." },
-            { id: 2, nom: "Matembele (Feuilles de patates douces)", prixUSD: 2.00, stock: 30, categorie: "Alimentation", image: "https://images.unsplash.com/photo-1594282488362-7994cd6324d5?w=400", tel: "0824248520", vendeurNom: "Papa Kanku", desc: "Matembele frais riches en vitamines." },
-            { id: 3, nom: "Maïs en Poudre (Fufu / Semoule)", prixUSD: 35.00, stock: 15, categorie: "Alimentation", image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400", tel: "0847135909", vendeurNom: "Marché Central Kin", desc: "Sac de maïs blanc de qualité supérieure." },
-            { id: 4, nom: "Charbon de Bois (Sac)", prixUSD: 12.00, stock: 50, categorie: "Autre", image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400", tel: "0824248520", vendeurNom: "Dépôt Energie RDC", desc: "Sac de charbon dur et sec." }
-        ];
-
-        let panier = [];
-        let ventesTotalesUSD = 0;
-        let nombreCommandes = 0;
-
-        function ouvrirAuth() {
-            document.getElementById('modal-auth').classList.remove('hidden');
-        }
-
-        function fermerAuth() {
-            document.getElementById('modal-auth').classList.add('hidden');
-        }
-
-        // ESPACE ADMINISTRATEUR SÉCURISÉ
-        function ouvrirConnexionAdmin() {
-            if(adminConnecte) {
-                afficherPageAdmin();
-                return;
-            }
-            const code = prompt("🔑 Entrez le mot de passe d'administration Wenzephone :");
-            if(code === "1234") { // Mot de passe Administrateur par défaut
-                adminConnecte = true;
-                alert("✅ Authentification Administrateur réussie.");
-                afficherPageAdmin();
-            } else if(code !== null) {
-                alert("❌ Mot de passe administrateur incorrect.");
-            }
-        }
-
-        function seDeconnecterAdmin() {
-            adminConnecte = false;
-            alert("Déconnexion de l'espace Administrateur.");
-            naviguerVers('accueil');
-        }
-
-        function afficherPageAdmin() {
-            naviguerVers('admin');
-            rafraichirAdmin();
-        }
-
-        function rafraichirAdmin() {
-            // Afficher produits à modérer
-            const containerProduits = document.getElementById('liste-produits-admin');
-            let htmlProd = '';
-            produits.forEach(p => {
-                htmlProd += `
-                    <div class="p-3 border rounded-xl flex justify-between items-center bg-slate-50">
-                        <div>
-                            <strong>${p.nom}</strong> (${p.vendeurNom} - ${p.tel})
-                            <p class="text-[11px] text-slate-500">${formaterPrix(p.prixUSD)} | Stock: ${p.stock}</p>
-                        </div>
-                        <button onclick="supprimerProduitAdmin(${p.id})" class="bg-red-600 hover:bg-red-700 text-white font-bold text-[10px] px-2.5 py-1 rounded-lg">
-                            <i class="fa-solid fa-trash"></i> Supprimer
-                        </button>
-                    </div>
-                `;
-            });
-            containerProduits.innerHTML = htmlProd || '<p class="text-slate-400">Aucun produit.</p>';
-
-            // Afficher la blacklist
-            const containerBlacklist = document.getElementById('liste-blacklist');
-            if(listeNoireNumeros.length === 0) {
-                containerBlacklist.innerHTML = '<p class="text-slate-400">Aucun numéro bloqué.</p>';
-            } else {
-                containerBlacklist.innerHTML = listeNoireNumeros.map(n => `<span class="inline-block bg-red-100 text-red-800 px-2 py-0.5 rounded-full font-bold mr-1">${n}</span>`).join('');
-            }
-
-            // Signalements
-            document.getElementById('badge-signalements').textContent = signalements.length + " alerte(s)";
-            const containerSig = document.getElementById('liste-signalements-admin');
-            if(signalements.length === 0) {
-                containerSig.innerHTML = '<p class="text-slate-400 text-center py-2">Aucun signalement reçu.</p>';
-            } else {
-                containerSig.innerHTML = signalements.map(s => `<div class="py-2 text-red-600">⚠️ Produit: <strong>${s.produit}</strong> | Raison: ${s.raison}</div>`).join('');
-            }
-        }
-
-        function supprimerProduitAdmin(id) {
-            if(confirm("Voulez-vous vraiment supprimer cet article de la plateforme ?")) {
-                produits = produits.filter(p => p.id !== id);
-                afficherProduits();
-                rafraichirAdmin();
-                alert("Article supprimé de la vitrine.");
-            }
-        }
-
-        function bloquerNumeroDirect() {
-            const input = document.getElementById('input-bloquer-num');
-            const num = input.value.trim();
-            if(num) {
-                listeNoireNumeros.push(num);
-                input.value = '';
-                rafraichirAdmin();
-                alert("Le numéro " + num + " a été ajouté à la liste noire.");
-            }
-        }
-
-        function signalerProduit(id) {
-            const p = produits.find(prod => prod.id === id);
-            if(p) {
-                const raison = prompt("Pourquoi signalez-vous cet article (ex: contenu inapproprié, arnaque) ?");
-                if(raison) {
-                    signalements.push({ produit: p.nom, raison: raison, id: Date.now() });
-                    alert("Merci. Votre signalement a été transmis à l'administrateur de Wenzephone.");
-                }
-            }
-        }
-
-        function controlerAccesPublier() {
-            if(!utilisateurActuel) {
-                alert("🔒 Accès restreint !\nVeuillez d'abord vous connecter en tant que Vendeur.");
-                ouvrirAuth();
-            } else if(utilisateurActuel.role !== 'Vendeur') {
-                alert("❌ Seuls les Vendeurs peuvent publier et gérer le stock.");
-                naviguerVers('accueil');
-            } else {
-                document.getElementById('pub-tel').value = utilisateurActuel.tel;
-                naviguerVers('publier');
-            }
-        }
-
-        function nettoyerNumero(tel) {
-            let t = tel.replace(/\s+/g, '').replace(/-/g, '');
-            if(t.startsWith('0')) {
-                t = '243' + t.substring(1);
-            } else if(t.startsWith('+243')) {
-                t = t.substring(1);
-            }
-            return t;
-        }
-
-        function validerNumeroRDC(telephone) {
-            const telPropre = telephone.replace(/\s+/g, '').replace(/-/g, '');
-            return /^(?:\+243|243|0)[89][0-9]{8}$/.test(telPropre);
-        }
-
-        function connecterUtilisateur(event) {
-            event.preventDefault();
-            const nom = document.getElementById('auth-nom').value.trim();
-            const tel = document.getElementById('auth-tel').value.trim();
-            const role = document.getElementById('auth-role').value;
-
-            if (!validerNumeroRDC(tel)) {
-                alert("❌ Veuillez entrer un vrai numéro RDC valide (ex: 0847135909).");
-                return;
-            }
-
-            // Vérifier si le numéro est banni
-            if(listeNoireNumeros.includes(tel)) {
-                alert("⛔ Ce numéro a été bloqué par l'administration pour non-respect des règles.");
-                return;
-            }
-
-            utilisateurActuel = { nom, tel, role };
-            fermerAuth();
-
-            const btnAuth = document.getElementById('btn-ouvrir-auth');
-            const lbl = document.getElementById('label-profil-connecte');
-
-            if(btnAuth) btnAuth.classList.add('hidden');
-            if(lbl) {
-                lbl.textContent = `👤 ${nom} (${role})`;
-                lbl.classList.remove('hidden');
-            }
-
-            const avertissementClient = document.getElementById('avertissement-client');
-            const contenuVendeur = document.getElementById('contenu-revenus-vendeur');
-
-            if(role === 'Client') {
-                avertissementClient.classList.remove('hidden');
-                contenuVendeur.classList.add('hidden');
-            } else {
-                avertissementClient.classList.add('hidden');
-                contenuVendeur.classList.remove('hidden');
-                document.getElementById('pub-tel').value = tel;
-            }
-
-            alert(`✅ Bienvenue ${nom} !\nConnecté avec succès en tant que ${role}.`);
-            rafraichirContacts();
-        }
-
-        function naviguerVers(pageId) {
-            document.querySelectorAll('.section-page').forEach(el => el.classList.add('hidden'));
-            const cible = document.getElementById('page-' + pageId);
-            if(cible) cible.classList.remove('hidden');
-
-            ['accueil', 'publier', 'messagerie', 'revenus'].forEach(id => {
-                const btn = document.getElementById('nav-' + id);
-                if(btn) {
-                    btn.classList.remove('text-[#007FFF]');
-                    btn.classList.add('text-slate-400');
-                }
-            });
-
-            const activeBtn = document.getElementById('nav-' + pageId);
-            if(activeBtn) {
-                activeBtn.classList.remove('text-slate-400');
-                activeBtn.classList.add('text-[#007FFF]');
-            }
-        }
-
-        function formaterPrix(prixUSD) {
-            if (deviseActuelle === 'CDF') {
-                return (prixUSD * TAUX_CDF).toLocaleString('fr-FR') + ' FC';
-            }
-            return '$ ' + prixUSD.toFixed(2);
-        }
-
-        function changerDevise() {
-            deviseActuelle = document.getElementById('select-devise').value;
-            afficherProduits();
-            afficherPanier();
-            mettreAJourRevenus();
-        }
-
-        function afficherProduits() {
-            const grille = document.getElementById('grille-produits');
-            document.getElementById('compteur-articles').textContent = produits.length + " article(s) disponible(s)";
-            
-            let html = '';
-            produits.forEach(p => {
-                const telClean = nettoyerNumero(p.tel);
-                const imgTag = p.image 
-                    ? `<img src="${p.image}" class="w-full h-full object-cover" alt="${p.nom}" onError="this.src='https://via.placeholder.com/300x200?text=Wenzephone'">`
-                    : `<i class="fa-solid fa-basket-shopping text-4xl text-slate-300"></i>`;
-
-                const badgeStock = p.stock > 0 
-                    ? `<span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded-full font-bold">Stock : ${p.stock} dispo</span>`
-                    : `<span class="bg-red-100 text-red-800 text-[10px] px-2 py-0.5 rounded-full font-bold">Rupture de stock</span>`;
-
-                const boutonAchat = p.stock > 0
-                    ? `<button onclick="ajouterAuPanier(${p.id})" class="w-full bg-[#0F2844] hover:bg-[#1a3a5f] text-white py-2 rounded-xl text-xs font-semibold shadow transition"><i class="fa-solid fa-cart-plus"></i> Ajouter au panier</button>`
-                    : `<button disabled class="w-full bg-slate-300 text-slate-500 py-2 rounded-xl text-xs font-bold cursor-not-allowed">Indisponible</button>`;
-
-                html += `
-                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex flex-col justify-between">
-                        <div>
-                            <div class="h-36 bg-slate-100 rounded-xl flex items-center justify-center overflow-hidden mb-3 relative">
-                                ${imgTag}
-                                <div class="absolute top-2 right-2">${badgeStock}</div>
-                                <button onclick="signalerProduit(${p.id})" class="absolute top-2 left-2 bg-white/80 hover:bg-white text-red-600 w-6 h-6 rounded-full flex items-center justify-center text-[10px] shadow" title="Signaler du contenu inapproprié">
-                                    <i class="fa-solid fa-flag"></i>
-                                </button>
-                            </div>
-                            <span class="text-[10px] bg-[#007FFF]/10 text-[#007FFF] px-2 py-0.5 rounded-full font-bold">${p.categorie}</span>
-                            <h4 class="font-bold text-[#0F2844] text-sm mt-1">${p.nom}</h4>
-                            <p class="text-xs text-slate-500 mt-1 line-clamp-2">${p.desc}</p>
-                            <p class="text-[10px] text-slate-400 mt-1"><i class="fa-solid fa-user"></i> Vendeur: <strong>${p.vendeurNom}</strong></p>
-                            <p class="text-[#007FFF] font-extrabold text-base mt-2">${formaterPrix(p.prixUSD)}</p>
-                        </div>
-                        <div class="mt-4 space-y-2">
-                            ${boutonAchat}
-                            <div class="flex gap-2">
-                                <a href="tel:${p.tel}" class="flex-1 bg-sky-50 text-[#007FFF] hover:bg-sky-100 text-center py-1.5 rounded-lg text-xs font-bold transition border border-sky-200">
-                                    <i class="fa-solid fa-phone"></i> Appeler
-                                </a>
-                                <a href="https://wa.me/${telClean}?text=Bonjour%20${encodeURIComponent(p.vendeurNom)},%20je%20souhaite%20commander%20:${encodeURIComponent(p.nom)}" target="_blank" class="flex-1 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 text-center py-1.5 rounded-lg text-xs font-bold transition border border-emerald-200">
-                                    <i class="fa-brands fa-whatsapp"></i> WhatsApp
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            grille.innerHTML = html;
-        }
-
-        function exposerArticle(event) {
-            event.preventDefault();
-            const nom = document.getElementById('pub-nom').value;
-            const prixUSD = parseFloat(document.getElementById('pub-prix').value);
-            const stock = parseInt(document.getElementById('pub-stock').value);
-            const image = document.getElementById('pub-image').value;
-            const tel = document.getElementById('pub-tel').value;
-            const desc = document.getElementById('pub-desc').value;
-
-            if (!validerNumeroRDC(tel)) {
-                alert("❌ Numéro invalide !");
-                return;
-            }
-
-            if(listeNoireNumeros.includes(tel)) {
-                alert("⛔ Votre numéro est bloqué sur Wenzephone.");
-                return;
-            }
-
-            const nouveauProduit = {
-                id: Date.now(),
-                nom,
-                prixUSD,
-                stock,
-                categorie: "Alimentation",
-                image,
-                tel,
-                vendeurNom: utilisateurActuel ? utilisateurActuel.nom : "Vendeur Kinshasa",
-                desc: desc || "Produit frais du marché."
-            };
-
-            produits.unshift(nouveauProduit);
-            afficherProduits();
-            rafraichirContacts();
-            document.getElementById('form-publier').reset();
-            alert("🎉 Produit publié avec succès sur le marché !");
-            naviguerVers('accueil');
-        }
-
-        function rafraichirContacts() {
-            const container = document.getElementById('liste-contacts');
-            let html = '';
-            let vus = new Set();
-            produits.forEach(p => {
-                if(!vus.has(p.tel)) {
-                    vus.add(p.tel);
-                    html += `
-                        <div onclick="ouvrirChat('${p.vendeurNom}', '${p.tel}')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-[#007FFF]/10 text-[#007FFF] rounded-full flex items-center justify-center font-bold">
-                                    <i class="fa-solid fa-user"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-sm text-[#0F2844]">${p.vendeurNom}</h4>
-                                    <p class="text-xs text-slate-500">Contact: ${p.tel}</p>
-                                </div>
-                            </div>
-                            <span class="text-xs text-emerald-600 font-semibold"><i class="fa-brands fa-whatsapp"></i> Discuter</span>
-                        </div>
-                    `;
-                }
-            });
-            container.innerHTML = html;
-        }
-
-        function ajouterAuPanier(id) {
-            const p = produits.find(prod => prod.id === id);
-            if(p && p.stock > 0) {
-                panier.push(p);
-                mettreAJourBadge();
-                alert(p.nom + " ajouté au panier !");
-            } else {
-                alert("Désolé, ce produit est en rupture de stock.");
-            }
-        }
-
-        function mettreAJourBadge() {
-            const badge = document.getElementById('badge-panier');
-            if(panier.length > 0) {
-                badge.textContent = panier.length;
-                badge.classList.remove('hidden');
-            } else {
-                badge.classList.add('hidden');
-            }
-        }
-
-        function afficherPanier() {
-            const container = document.getElementById('contenu-panier');
-            const blocTotal = document.getElementById('bloc-total');
-            const texteTotal = document.getElementById('texte-total-panier');
-
-            if(panier.length === 0) {
-                container.innerHTML = '<p class="text-sm text-slate-500 text-center py-6">Votre panier est vide.</p>';
-                blocTotal.classList.add('hidden');
-                return;
-            }
-
-            let html = '';
-            let totalUSD = 0;
-            panier.forEach((item, index) => {
-                totalUSD += item.prixUSD;
-                html += `
-                    <div class="flex justify-between items-center border-b pb-2 text-sm">
-                        <div>
-                            <h4 class="font-bold text-slate-800">${item.nom}</h4>
-                            <p class="text-[#007FFF] font-semibold">${formaterPrix(item.prixUSD)}</p>
-                        </div>
-                        <button onclick="supprimerDuPanier(${index})" class="text-red-500 hover:text-red-700 text-xs"><i class="fa-solid fa-trash"></i> Retirer</button>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-            texteTotal.textContent = formaterPrix(totalUSD);
-            blocTotal.classList.remove('hidden');
-        }
-
-        function supprimerDuPanier(index) {
-            panier.splice(index, 1);
-            mettreAJourBadge();
-            afficherPanier();
-        }
-
-        function validerPaiementMobile() {
-            if(panier.length === 0) return;
-            const modePaiement = document.querySelector('input[name="paiement"]:checked').value;
-            const telPaiement = document.getElementById('tel-paiement').value;
-
-            if(!validerNumeroRDC(telPaiement)) {
-                alert("❌ Entrez un numéro RDC valide pour le paiement.");
-                return;
-            }
-
-            panier.forEach(item => {
-                let prod = produits.find(p => p.id === item.id);
-                if(prod && prod.stock > 0) {
-                    prod.stock -= 1;
-                }
-            });
-
-            let totalUSD = panier.reduce((sum, item) => sum + item.prixUSD, 0);
-            ventesTotalesUSD += totalUSD;
-            nombreCommandes += 1;
-
-            alert(`✅ Commande validée et payée avec succès via ${modePaiement} (${telPaiement}) !`);
-            
-            panier = [];
-            mettreAJourBadge();
-            afficherPanier();
-            afficherProduits();
-            mettreAJourRevenus();
-            naviguerVers('accueil');
-        }
-
-        function mettreAJourRevenus() {
-            document.getElementById('stat-ventes').textContent = formaterPrix(ventesTotalesUSD);
-            document.getElementById('stat-commandes').textContent = nombreCommandes;
-            document.getElementById('stat-revenunet').textContent = formaterPrix(ventesTotalesUSD * 0.90);
-
-            const hist = document.getElementById('liste-historique');
-            if(nombreCommandes > 0) {
-                hist.innerHTML = `<div class="p-2 bg-sky-50 text-[#0F2844] rounded-lg flex justify-between border border-sky-200"><span>Commande #${nombreCommandes}</span> <strong>${formaterPrix(ventesTotalesUSD)}</strong></div>`;
-            }
-        }
-
-        function ouvrirChat(nom, tel) {
-            const telClean = nettoyerNumero(tel);
-            document.getElementById('chat-nom').textContent = nom;
-            document.getElementById('chat-num-label').textContent = tel;
-            document.getElementById('link-appel').href = "tel:" + tel;
-            document.getElementById('link-whatsapp').href = "https://wa.me/" + telClean;
-            naviguerVers('chat');
-        }
-
-        function envoyerMessageChat() {
-            const input = document.getElementById('input-chat');
-            const box = document.getElementById('box-discussion');
-            if(input && input.value.trim() !== '') {
-                box.innerHTML += `<div class="bg-[#007FFF] text-white p-3 rounded-2xl rounded-tr-none max-w-[80%] ml-auto shadow-sm">${input.value}</div>`;
-                input.value = '';
-                box.scrollTop = box.scrollHeight;
-            }
-        }
-
-        window.onload = function() {
-            afficherProduits();
-            rafraichirContacts();
-        };
-    </script>
-</body>
-</html>
